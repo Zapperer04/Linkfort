@@ -21,7 +21,9 @@ function CreateShortURL() {
 
     setCheckingCode(true);
     try {
-      const response = await axios.get(`${API_BASE}/api/check-code/${code}`);
+      const token = localStorage.getItem('linkfort_token') || localStorage.getItem('access_token') || localStorage.getItem('token');
+      const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+      const response = await axios.get(`${API_BASE}/api/check-code/${code}`, headers);
       setCodeAvailability(response.data);
     } catch (err) {
       setCodeAvailability(null);
@@ -45,11 +47,13 @@ function CreateShortURL() {
     setError(null);
 
     try {
+      const token = localStorage.getItem('linkfort_token') || localStorage.getItem('access_token') || localStorage.getItem('token');
+      const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
       const response = await axios.post(`${API_BASE}/api/shorten`, {
         url: url,
         custom_code: customCode || undefined,
         expiration_days: expirationDays ? parseInt(expirationDays) : undefined
-      });
+      }, headers);
 
       setResult(response.data);
       setUrl('');

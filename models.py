@@ -13,7 +13,6 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
     
-    # Relationship to URLs
     urls = db.relationship('URL', backref='owner', lazy=True)
     
     def __repr__(self):
@@ -44,13 +43,15 @@ class URL(db.Model):
     # Expiration
     expires_at = db.Column(db.DateTime, nullable=True, index=True)
     is_expired = db.Column(db.Boolean, default=False)
+
+    # ✅ NEW: Active/disabled toggle
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
     
     # Threat detection
     threat_score = db.Column(db.Float, default=0.0)
     threat_verdict = db.Column(db.String(20), default='SAFE')
     threat_details = db.Column(db.JSON, nullable=True)
     
-    # Clicks relationship
     clicks = db.relationship('Click', backref='url', lazy=True, cascade='all, delete-orphan')
     
     def __repr__(self):
@@ -76,6 +77,7 @@ class URL(db.Model):
             'threat_details': self.threat_details,
             'expires_at': self.expires_at.isoformat() if self.expires_at else None,
             'is_expired': self.is_url_expired(),
+            'is_active': self.is_active,   # ✅ NEW: exposed in API response
             'user_id': self.user_id
         }
 

@@ -26,7 +26,9 @@ function Analytics() {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/api/analytics`);
+      const token = localStorage.getItem('linkfort_token') || localStorage.getItem('access_token') || localStorage.getItem('token');
+      const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+      const response = await axios.get(`${API_BASE}/api/analytics`, headers);
       setAnalyticsData(response.data);
       setLoading(false);
     } catch (error) {

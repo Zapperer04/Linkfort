@@ -5,10 +5,24 @@ import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
 import CreateShortURL from './components/CreateShortURL';
 import Analytics from './components/Analytics';
+import URLDetailPage from './components/URLDetailPage';
 
 function AppContent() {
   const { user, logout, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [selectedShortCode, setSelectedShortCode] = useState(null);
+
+  // Navigate to URL detail view
+  const openURLDetail = (shortCode) => {
+    setSelectedShortCode(shortCode);
+    setActiveTab('url-detail');
+  };
+
+  // Go back to dashboard from detail view
+  const backToDashboard = () => {
+    setSelectedShortCode(null);
+    setActiveTab('dashboard');
+  };
 
   if (loading) {
     return (
@@ -63,33 +77,45 @@ function AppContent() {
             </button>
           </div>
         </div>
-        <nav className="tabs">
-          <button
-            className={activeTab === 'dashboard' ? 'active' : ''}
-            onClick={() => setActiveTab('dashboard')}
-          >
-            📊 Dashboard
-          </button>
-          <button
-            className={activeTab === 'create' ? 'active' : ''}
-            onClick={() => setActiveTab('create')}
-          >
-            ✨ Create Short URL
-          </button>
-          <button
-            className={activeTab === 'analytics' ? 'active' : ''}
-            onClick={() => setActiveTab('analytics')}
-          >
-            📈 Analytics
-          </button>
-        </nav>
+
+        {/* Hide tabs when on detail view */}
+        {activeTab !== 'url-detail' && (
+          <nav className="tabs">
+            <button
+              className={activeTab === 'dashboard' ? 'active' : ''}
+              onClick={() => setActiveTab('dashboard')}
+            >
+              📊 Dashboard
+            </button>
+            <button
+              className={activeTab === 'create' ? 'active' : ''}
+              onClick={() => setActiveTab('create')}
+            >
+              ✨ Create Short URL
+            </button>
+            <button
+              className={activeTab === 'analytics' ? 'active' : ''}
+              onClick={() => setActiveTab('analytics')}
+            >
+              📈 Analytics
+            </button>
+          </nav>
+        )}
       </header>
 
       <main className="app-main">
         <div style={{ animation: 'fadeIn 0.3s ease-in' }}>
-          {activeTab === 'dashboard' && <Dashboard />}
+          {activeTab === 'dashboard' && (
+            <Dashboard onOpenURL={openURLDetail} />
+          )}
           {activeTab === 'create' && <CreateShortURL />}
           {activeTab === 'analytics' && <Analytics />}
+          {activeTab === 'url-detail' && selectedShortCode && (
+            <URLDetailPage
+              shortCode={selectedShortCode}
+              onBack={backToDashboard}
+            />
+          )}
         </div>
       </main>
 

@@ -18,8 +18,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // On app load, check if token exists in localStorage
-    const savedToken = localStorage.getItem('linkfort_token');
+    // On app load, check if token exists in localStorage (support legacy keys)
+    const savedToken = localStorage.getItem('linkfort_token') || localStorage.getItem('access_token') || localStorage.getItem('token');
     
     if (savedToken) {
       setAxiosToken(savedToken);  // Set header immediately
