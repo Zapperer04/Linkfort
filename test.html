@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LinkFort Test</title>
+</head>
+<body>
+    <h1>Test LinkFort API</h1>
+    
+    <input type="text" id="urlInput" placeholder="Enter URL to shorten" style="width: 400px">
+    <button onclick="shortenURL()">Shorten</button>
+    
+    <div id="result" style="margin-top: 20px; font-family: monospace;"></div>
+
+    <script>
+        async function shortenURL() {
+            const url = document.getElementById('urlInput').value;
+            const response = await fetch('http://localhost:5000/api/shorten', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({url: url})
+            });
+            const data = await response.json();
+            document.getElementById('result').innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+        }
+    </script>
+</body>
+</html>
