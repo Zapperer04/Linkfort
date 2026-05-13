@@ -21,13 +21,13 @@ services:
           name: linkfort-cache
           property: connectionString
       - key: BASE_URL
-        value: https://linkfort.dev
+        value: https://linkfort-api.onrender.com
       - key: SHORT_URL_BASE
-        value: https://lf.linkfort.dev
+        value: https://linkfort-api.onrender.com
       - key: API_BASE_URL
-        value: https://api.linkfort.dev
+        value: https://linkfort-api.onrender.com
       - key: FRONTEND_URL
-        value: https://linkfort.dev
+        value: https://linkfort.vercel.app
 
   # PostgreSQL Database
   - type: pserv

@@ -1,9 +1,4 @@
 {
   "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/build",
-  "env": {
-    "REACT_APP_API_BASE": "@linkfort_api_base",
-    "REACT_APP_SHORT_URL_BASE": "@linkfort_short_url_base",
-    "REACT_APP_APP_BASE": "@linkfort_app_base"
-  }
+  "outputDirectory": "frontend/build"
 }

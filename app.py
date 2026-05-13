@@ -189,6 +189,16 @@ def expired_token_callback(jwt_header, jwt_payload):
 
 # ==================== AUTH ROUTES ====================
 
+@app.route('/', methods=['GET'])
+def root():
+    """Landing endpoint for deployed backend service"""
+    return jsonify({
+        'name': 'LinkFort API',
+        'status': 'running',
+        'health': '/api/health',
+        'message': 'Backend is live. Use /api/* endpoints for application access.'
+    }), 200
+
 @app.route('/api/auth/register', methods=['POST'])
 def register():
     """Register a new user"""
