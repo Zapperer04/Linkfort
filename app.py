@@ -32,6 +32,8 @@ app.config['JWT_HEADER_TYPE'] = 'Bearer'
 cors_origins = [
     "http://localhost:3000",  # Local dev
     os.getenv('FRONTEND_URL', 'http://localhost:3000'),  # Production frontend
+    "https://linkfort.vercel.app",  # Deployed Vercel frontend
+    r"https://.*\.vercel\.app",  # Vercel preview deployments
 ]
 CORS(app, resources={
     r"/api/*": {
@@ -222,9 +224,21 @@ def register():
 
     if not email or not password:
         return jsonify({'error': 'Email and password are required'}), 400
-    if len(password) < 6: return jsonify({'error': 'Password must be at least 6 characters'}), 400
-    if '@' not in email: return jsonify({'error': 'Invalid email address'}), 400
-    if User.query.filter_by(email=email).first(): return jsonify({'error': 'Email already registered'}), 400
+    if len(password) < 6: 
+        return jsonify({'error': 'Password must be at least 6 characters'}), 400
+    if '@' not in email: 
+        return jsonify({'error': 'Invalid email address'}), 400
+    if User.query.filter_by(email=email).first(): 
+        return jsonify({'error': 'Email already registered'}), 400
+
+    # Password strength validation
+    has_upper = any(c.isupper() for c in password)
+    has_lower = any(c.islower() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    strength_score = sum([has_upper, has_lower, has_digit, len(password) >= 8])
+    
+    if strength_score < 2:
+        return jsonify({'error': 'Password too weak. Use uppercase, lowercase, and numbers'}), 400
 
     suffix = 1
     while User.query.filter_by(username=username).first():

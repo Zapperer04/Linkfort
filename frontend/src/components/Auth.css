@@ -451,6 +451,56 @@
   color: var(--lf-auth-lime);
 }
 
+/* Password Strength Indicator */
+.lf-password-strength {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(100, 116, 255, 0.06);
+  border: 1px solid rgba(100, 116, 255, 0.12);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.lf-strength-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(100, 116, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.lf-strength-fill {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 3px;
+}
+
+.lf-strength-text {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.lf-strength-checklist {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.lf-check-item {
+  color: var(--lf-auth-muted);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.lf-check-item.active {
+  color: var(--lf-auth-lime);
+  font-weight: 500;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .lf-auth-container {

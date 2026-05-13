@@ -3,9 +3,27 @@ import axios from 'axios';
 
 const AuthContext = createContext(null);
 
-// ✅ PRODUCTION: Use environment variable for API base URL
-// Falls back to localhost for local development
-const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+// ✅ PRODUCTION: Determine API base URL
+// Uses environment variable if set, otherwise auto-detects based on domain
+const getAPIBase = () => {
+  const envBase = process.env.REACT_APP_API_BASE;
+
+  // If a real production API base is configured, use it.
+  // Ignore localhost values when the app is already running on Vercel.
+  if (envBase && !(window.location.hostname.includes('vercel.app') && envBase.includes('localhost'))) {
+    return envBase;
+  }
+  
+  // If running on Vercel frontend domain, use Render backend
+  if (window.location.hostname.includes('vercel.app')) {
+    return 'https://linkfort.onrender.com';
+  }
+  
+  // Local development
+  return 'http://localhost:5000';
+};
+
+const API_BASE = getAPIBase();
 
 // Set token in axios headers globally
 const setAxiosToken = (token) => {

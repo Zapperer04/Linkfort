@@ -13,6 +13,71 @@ function Auth({ onSuccess, onBackToHome }) {
   const [error, setError] = useState('');
   const { login, register } = useAuth();
 
+  const getAuthErrorMessage = (err) => {
+    const apiError = err?.response?.data?.error || err?.response?.data?.message || '';
+    const status = err?.response?.status;
+
+    if (!err?.response) {
+      return 'Unable to reach the server. Please try again.';
+    }
+
+    if (status === 401) {
+      if (isLogin) {
+        return 'Incorrect email or password.';
+      }
+      return apiError || 'You could not be signed up. Please check your password and try again.';
+    }
+
+    if (status === 400) {
+      return apiError || (isLogin
+        ? 'Please check your login details.'
+        : 'Please fix the highlighted signup details and try again.');
+    }
+
+    if (status === 404) {
+      return apiError || 'Account not found.';
+    }
+
+    if (status >= 500) {
+      return 'Server error. Please try again in a moment.';
+    }
+
+    return apiError || 'Something went wrong. Please try again.';
+  };
+
+  // Password strength calculator
+  const calculatePasswordStrength = (password) => {
+    const checks = {
+      length: password.length >= 6,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      numbers: /\d/.test(password),
+      special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    };
+    
+    const score = Object.values(checks).filter(Boolean).length;
+    return { checks, score, maxScore: 5 };
+  };
+
+  const passwordStrength = calculatePasswordStrength(formData.password);
+
+  const getStrengthColor = () => {
+    if (passwordStrength.score <= 1) return '#ef4444';
+    if (passwordStrength.score <= 2) return '#f97316';
+    if (passwordStrength.score === 3) return '#eab308';
+    if (passwordStrength.score === 4) return '#84cc16';
+    return '#22c55e';
+  };
+
+  const getStrengthText = () => {
+    if (!formData.password) return '';
+    if (passwordStrength.score <= 1) return 'Weak';
+    if (passwordStrength.score <= 2) return 'Fair';
+    if (passwordStrength.score === 3) return 'Good';
+    if (passwordStrength.score === 4) return 'Strong';
+    return 'Very Strong';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -27,11 +92,16 @@ function Auth({ onSuccess, onBackToHome }) {
           setLoading(false);
           return;
         }
+        if (passwordStrength.score < 2) {
+          setError('Password is too weak. Add uppercase, numbers, or special characters.');
+          setLoading(false);
+          return;
+        }
         await register(formData.email, formData.password);
       }
       onSuccess();
     } catch (err) {
-      setError(err.response?.data?.error || 'Something went wrong');
+      setError(getAuthErrorMessage(err));
     }
     setLoading(false);
   };
@@ -138,6 +208,40 @@ function Auth({ onSuccess, onBackToHome }) {
                   placeholder="••••••••"
                   required
                 />
+                
+                {!isLogin && formData.password && (
+                  <div className="lf-password-strength">
+                    <div className="lf-strength-bar">
+                      <div 
+                        className="lf-strength-fill" 
+                        style={{
+                          width: `${(passwordStrength.score / passwordStrength.maxScore) * 100}%`,
+                          backgroundColor: getStrengthColor()
+                        }}
+                      />
+                    </div>
+                    <div className="lf-strength-text" style={{ color: getStrengthColor() }}>
+                      Strength: <strong>{getStrengthText()}</strong>
+                    </div>
+                    <div className="lf-strength-checklist">
+                      <div className={`lf-check-item ${passwordStrength.checks.length ? 'active' : ''}`}>
+                        {passwordStrength.checks.length ? '✓' : '○'} At least 6 characters
+                      </div>
+                      <div className={`lf-check-item ${passwordStrength.checks.uppercase ? 'active' : ''}`}>
+                        {passwordStrength.checks.uppercase ? '✓' : '○'} Uppercase letter (A-Z)
+                      </div>
+                      <div className={`lf-check-item ${passwordStrength.checks.lowercase ? 'active' : ''}`}>
+                        {passwordStrength.checks.lowercase ? '✓' : '○'} Lowercase letter (a-z)
+                      </div>
+                      <div className={`lf-check-item ${passwordStrength.checks.numbers ? 'active' : ''}`}>
+                        {passwordStrength.checks.numbers ? '✓' : '○'} Number (0-9)
+                      </div>
+                      <div className={`lf-check-item ${passwordStrength.checks.special ? 'active' : ''}`}>
+                        {passwordStrength.checks.special ? '✓' : '○'} Special character (!@#$...)
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {!isLogin && (
