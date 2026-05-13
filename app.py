@@ -192,10 +192,18 @@ def expired_token_callback(jwt_header, jwt_payload):
 @app.route('/', methods=['GET'])
 def root():
     """Landing endpoint for deployed backend service"""
+    # Browser users should land on the frontend app; API clients keep JSON.
+    accept_header = request.headers.get('Accept', '')
+    frontend_url = current_app.config.get('FRONTEND_URL')
+
+    if frontend_url and 'text/html' in accept_header:
+        return redirect(frontend_url, code=302)
+
     return jsonify({
         'name': 'LinkFort API',
         'status': 'running',
         'health': '/api/health',
+        'frontend': frontend_url,
         'message': 'Backend is live. Use /api/* endpoints for application access.'
     }), 200
 

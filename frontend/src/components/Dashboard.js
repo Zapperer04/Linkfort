@@ -1,9 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ThreatFeed from './ThreatFeed';
 import './Dashboard.css';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
 
 function Dashboard({ onOpenURL }) {
   const [stats, setStats] = useState({
