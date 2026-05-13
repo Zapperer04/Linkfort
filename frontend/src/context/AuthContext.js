@@ -59,9 +59,8 @@ export function AuthProvider({ children }) {
     return response.data;
   };
 
-  const register = async (username, email, password) => {
+  const register = async (email, password) => {
     const response = await axios.post(`${API_BASE}/api/auth/register`, {
-      username,
       email,
       password
     });

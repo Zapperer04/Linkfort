@@ -1,0 +1,481 @@
+/* ============ LinkFort Dashboard Theme ============ */
+
+:root {
+  --lf-dashboard-bg: #0b1026;
+  --lf-dashboard-bg-alt: #0f1736;
+  --lf-dashboard-panel: rgba(17, 27, 62, 0.4);
+  --lf-dashboard-cyan: #00d9ff;
+  --lf-dashboard-lime: #00ff88;
+  --lf-dashboard-pink: #ff5ea8;
+  --lf-dashboard-indigo: #4f5dff;
+  --lf-dashboard-text-light: #e2e8f0;
+  --lf-dashboard-text-muted: #a0aec0;
+  --lf-dashboard-text-dark: #718096;
+  --lf-dashboard-border: rgba(0, 217, 255, 0.2);
+  --lf-dashboard-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.dashboard {
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(79, 93, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+    linear-gradient(135deg, #0b1026 0%, #0f1736 100%);
+  min-height: 100vh;
+  padding: 40px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(0,217,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dashboard > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard h2 {
+  color: var(--lf-dashboard-text-light);
+  margin-bottom: 32px;
+  font-size: clamp(24px, 5vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--lf-dashboard-cyan), var(--lf-dashboard-lime));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============ Grid & Cards ============ */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--lf-dashboard-panel);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--lf-dashboard-border);
+  border-radius: 16px;
+  padding: 24px 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.stat-card:hover {
+  border-color: var(--lf-dashboard-cyan);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), var(--lf-dashboard-shadow);
+  transform: translateY(-4px);
+}
+
+.stat-card:hover::before {
+  left: 100%;
+}
+
+.stat-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.stat-label {
+  color: var(--lf-dashboard-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--lf-dashboard-cyan), var(--lf-dashboard-lime));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============ Tabs ============ */
+
+.dashboard-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--lf-dashboard-border);
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.dashboard-tab-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--lf-dashboard-text-dark);
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-tab-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.dashboard-tab-btn:hover {
+  border-color: var(--lf-dashboard-cyan);
+  color: var(--lf-dashboard-text-light);
+}
+
+.dashboard-tab-btn:hover::before {
+  left: 100%;
+}
+
+.dashboard-tab-btn.active {
+  background: linear-gradient(135deg, var(--lf-dashboard-cyan), var(--lf-dashboard-lime));
+  color: var(--lf-dashboard-bg);
+  font-weight: 800;
+  box-shadow: 0 4px 16px rgba(0, 217, 255, 0.4);
+}
+
+/* ============ Empty State ============ */
+
+.dashboard-empty {
+  text-align: center;
+  padding: 60px 40px;
+  color: var(--lf-dashboard-text-muted);
+}
+
+.dashboard-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.dashboard-empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--lf-dashboard-text-light);
+  margin-bottom: 8px;
+}
+
+.dashboard-empty-desc {
+  font-size: 14px;
+  color: var(--lf-dashboard-text-muted);
+}
+
+/* ============ Tables ============ */
+
+.dashboard-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.dashboard-table thead tr {
+  border-bottom: 2px solid var(--lf-dashboard-border);
+}
+
+.dashboard-table th {
+  padding: 12px;
+  color: var(--lf-dashboard-text-dark);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  background: rgba(0, 217, 255, 0.05);
+}
+
+.dashboard-table th:first-child,
+.dashboard-table th:nth-child(2) {
+  text-align: left;
+}
+
+.dashboard-table tbody tr {
+  border-bottom: 1px solid var(--lf-dashboard-border);
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.dashboard-table tbody tr:hover {
+  background: rgba(0, 217, 255, 0.1);
+  box-shadow: inset 0 0 12px rgba(0, 217, 255, 0.1);
+}
+
+.dashboard-table td {
+  padding: 12px;
+  color: var(--lf-dashboard-text-light);
+}
+
+.dashboard-table a {
+  color: var(--lf-dashboard-cyan);
+  font-weight: 600;
+  font-family: monospace;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.dashboard-table a:hover {
+  color: var(--lf-dashboard-lime);
+  text-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
+}
+
+.dashboard-table-cell-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--lf-dashboard-text-muted);
+}
+
+/* ============ Verdict Badges ============ */
+
+.dashboard-verdict {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dashboard-verdict.safe {
+  background: rgba(0, 255, 136, 0.2);
+  color: var(--lf-dashboard-lime);
+  border: 1px solid var(--lf-dashboard-lime);
+}
+
+.dashboard-verdict.threat {
+  background: rgba(255, 94, 168, 0.2);
+  color: var(--lf-dashboard-pink);
+  border: 1px solid var(--lf-dashboard-pink);
+}
+
+/* ============ Buttons ============ */
+
+.dashboard-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dashboard-btn-copy {
+  background: linear-gradient(135deg, var(--lf-dashboard-indigo), var(--lf-dashboard-cyan));
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+}
+
+.dashboard-btn-copy:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 217, 255, 0.4);
+}
+
+.dashboard-btn-copy.copied {
+  background: linear-gradient(135deg, var(--lf-dashboard-lime), var(--lf-dashboard-cyan));
+  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+}
+
+.dashboard-btn-manage {
+  background: linear-gradient(135deg, var(--lf-dashboard-indigo), var(--lf-dashboard-cyan));
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+}
+
+.dashboard-btn-manage:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 217, 255, 0.4);
+}
+
+.dashboard-btn-manage:active {
+  transform: translateY(0);
+}
+
+/* ============ Status Indicators ============ */
+
+.dashboard-status-active {
+  color: var(--lf-dashboard-lime);
+  font-weight: 600;
+}
+
+.dashboard-status-expired {
+  color: var(--lf-dashboard-pink);
+  font-weight: 600;
+  text-decoration: line-through;
+}
+
+.dashboard-status-never {
+  color: var(--lf-dashboard-cyan);
+  font-weight: 600;
+}
+
+.dashboard-status-time {
+  color: var(--lf-dashboard-text-muted);
+  font-size: 13px;
+}
+
+/* ============ Loading State ============ */
+
+.dashboard-loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--lf-dashboard-text-muted);
+}
+
+.dashboard-loading-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: lfDashboardSpin 2s linear infinite;
+}
+
+.dashboard-loading-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--lf-dashboard-text-light);
+}
+
+@keyframes lfDashboardSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ============ Expired URLs Row Styling ============ */
+
+.dashboard-table tbody tr.expired {
+  opacity: 0.65;
+}
+
+.dashboard-table tbody tr.expired:hover {
+  opacity: 1;
+}
+
+/* ============ Responsive ============ */
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 24px 16px;
+  }
+
+  .dashboard h2 {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px 12px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .dashboard-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .dashboard-tabs {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .dashboard-tab-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 16px 12px;
+  }
+
+  .dashboard h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px 8px;
+  }
+
+  .stat-icon {
+    font-size: 24px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .dashboard-table th,
+  .dashboard-table td {
+    padding: 6px;
+    font-size: 11px;
+  }
+}

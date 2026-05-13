@@ -63,8 +63,14 @@ class URL(db.Model):
         return datetime.utcnow() > self.expires_at
     
     def to_dict(self):
-        from flask import current_app
-        base_url = current_app.config.get('BASE_URL', 'http://localhost:5000')
+        from flask import current_app, request
+        # Prefer building the short URL from the incoming request host (supports proxies)
+        try:
+            host_base = request.host_url.rstrip('/')
+        except RuntimeError:
+            host_base = None
+
+        base_url = host_base or current_app.config.get('BASE_URL', 'http://localhost:5000')
         return {
             'id': self.id,
             'original_url': self.original_url,
@@ -77,7 +83,7 @@ class URL(db.Model):
             'threat_details': self.threat_details,
             'expires_at': self.expires_at.isoformat() if self.expires_at else None,
             'is_expired': self.is_url_expired(),
-            'is_active': self.is_active,   # ✅ NEW: exposed in API response
+            'is_active': self.is_active,
             'user_id': self.user_id
         }
 

@@ -6,7 +6,7 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0b1026 0%, #0f1736 100%);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -21,8 +21,8 @@ body::before {
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(79, 93, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 217, 255, 0.1) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
@@ -35,17 +35,60 @@ body::before {
   z-index: 1;
 }
 
+/* Particle System */
+.app-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-particle {
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(0, 217, 255, 0.6);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+  animation-name: appParticle;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Floating glow blobs */
+.app-bg-glow {
+  position: fixed;
+  width: 38rem;
+  height: 38rem;
+  border-radius: 999px;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  animation: appFloatBlob 14s ease-in-out infinite;
+}
+
+.app-bg-glow-a {
+  left: -8rem;
+  top: -5rem;
+  background: radial-gradient(circle, rgba(0, 217, 255, 0.2) 0%, rgba(0, 217, 255, 0) 70%);
+}
+
+.app-bg-glow-b {
+  right: -9rem;
+  top: 18rem;
+  background: radial-gradient(circle, rgba(255, 94, 168, 0.15) 0%, rgba(255, 94, 168, 0) 70%);
+  animation-delay: 2.5s;
+}
+
 .app-header {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(17, 27, 62, 0.4);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(0, 217, 255, 0.2);
   padding: 24px 40px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .header-content h1 {
   font-size: 36px;
-  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+  background: linear-gradient(135deg, #00d9ff 0%, #00ff88 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -55,7 +98,7 @@ body::before {
 }
 
 .tagline {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 15px;
   font-weight: 500;
 }
@@ -69,28 +112,29 @@ body::before {
 .tabs button {
   padding: 12px 24px;
   border: none;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   cursor: pointer;
   font-size: 15px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.6);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0, 217, 255, 0.2);
 }
 
 .tabs button:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 217, 255, 0.1);
   transform: translateY(-2px);
   color: white;
+  border-color: rgba(0, 217, 255, 0.5);
 }
 
 .tabs button.active {
-  background: rgba(255, 255, 255, 0.95);
-  color: #667eea;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, #00d9ff, #00ff88);
+  color: #0b1026;
+  box-shadow: 0 8px 24px rgba(0, 217, 255, 0.4);
+  border: 1px solid rgba(0, 217, 255, 0.6);
 }
 
 .app-main {
@@ -103,14 +147,12 @@ body::before {
 
 /* Stat Cards with Glassmorphism */
 .stat-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(17, 27, 62, 0.4);
   backdrop-filter: blur(20px);
   border-radius: 20px;
   padding: 28px;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    0 1px 0 rgba(255, 255, 255, 0.6) inset;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 217, 255, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -129,21 +171,20 @@ body::before {
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 
-    0 16px 48px rgba(0, 0, 0, 0.15),
-    0 1px 0 rgba(255, 255, 255, 0.6) inset;
+  box-shadow: 0 16px 48px rgba(0, 217, 255, 0.3), 0 0 20px rgba(0, 217, 255, 0.2);
+  border-color: rgba(0, 217, 255, 0.5);
 }
 
 .stat-value {
   font-size: 42px;
   font-weight: 800;
   color: #2d3748;
-  margin: 12px 0;
+  margin: 00d9ff;
   letter-spacing: -1px;
 }
 
 .stat-label {
-  color: #718096;
+  color: #a0aec0;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -158,8 +199,8 @@ body::before {
 
 /* Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #00d9ff 0%, #00ff88 100%);
+  color: #0b1026;
   padding: 14px 28px;
   border: none;
   border-radius: 12px;
@@ -167,7 +208,7 @@ body::before {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 217, 255, 0.4);
   position: relative;
   overflow: hidden;
 }
@@ -189,7 +230,7 @@ body::before {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 217, 255, 0.5);
 }
 
 .btn-primary:active {
@@ -356,6 +397,34 @@ input[type="text"]:focus, input[type="url"]:focus {
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+/* Particle Animations */
+@keyframes appParticle {
+  0% {
+    transform: translate3d(0, 24px, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate3d(55px, -120px, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes appFloatBlob {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(26px) translateX(18px);
   }
 }
 

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ThreatFeed from './ThreatFeed';
+import './Dashboard.css';
 
 const API_BASE = 'http://localhost:5000';
 
@@ -27,7 +28,6 @@ function Dashboard({ onOpenURL }) {
 
   const fetchDashboardData = async () => {
     try {
-      // always include token if available; fall back to whatever key the auth context uses
       const token = localStorage.getItem('linkfort_token') || localStorage.getItem('access_token') || localStorage.getItem('token');
       const headers = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
 
@@ -77,36 +77,23 @@ function Dashboard({ onOpenURL }) {
   };
 
   const statCards = [
-    { icon: '🔗', label: 'Total URLs',      value: stats.totalUrls,      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
-    { icon: '👆', label: 'Total Clicks',    value: stats.totalClicks,    gradient: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' },
-    { icon: '✅', label: 'Active URLs',     value: stats.activeUrls,     gradient: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' },
-    { icon: '⏰', label: 'Expired URLs',    value: stats.expiredUrls,    gradient: 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)' },
-    { icon: '🛡️', label: 'Threats Blocked', value: stats.threatsBlocked, gradient: 'linear-gradient(135deg, #f56565 0%, #c53030 100%)' }
+    { icon: '🔗', label: 'Total URLs', value: stats.totalUrls },
+    { icon: '👆', label: 'Total Clicks', value: stats.totalClicks },
+    { icon: '✅', label: 'Active URLs', value: stats.activeUrls },
+    { icon: '⏰', label: 'Expired URLs', value: stats.expiredUrls },
+    { icon: '🛡️', label: 'Threats Blocked', value: stats.threatsBlocked }
   ];
 
   const tabs = [
-    { id: 'active',  label: '✅ Active URLs', count: stats.activeUrls,     activeGradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
-    { id: 'expired', label: '⏰ Expired URLs', count: stats.expiredUrls,    activeGradient: 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)' },
-    { id: 'threats', label: '🚨 Threats',      count: stats.threatsBlocked, activeGradient: 'linear-gradient(135deg, #f56565 0%, #c53030 100%)' }
+    { id: 'active', label: '✅ Active URLs', count: stats.activeUrls },
+    { id: 'expired', label: '⏰ Expired URLs', count: stats.expiredUrls },
+    { id: 'threats', label: '🚨 Threats', count: stats.threatsBlocked }
   ];
 
   const manageBtn = (shortCode) => (
     <button
       onClick={() => onOpenURL && onOpenURL(shortCode)}
-      style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        color: 'white',
-        border: 'none',
-        borderRadius: '8px',
-        padding: '6px 12px',
-        cursor: 'pointer',
-        fontSize: '12px',
-        fontWeight: '600',
-        transition: 'all 0.2s',
-        whiteSpace: 'nowrap'
-      }}
-      onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-      onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+      className="dashboard-btn dashboard-btn-manage"
     >
       ⚙️ Manage
     </button>
@@ -114,53 +101,37 @@ function Dashboard({ onOpenURL }) {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '60px', color: 'white' }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }} className="loading">⏳</div>
-        <p style={{ fontSize: '18px', fontWeight: '600' }}>Loading dashboard...</p>
+      <div className="dashboard-loading">
+        <div className="dashboard-loading-icon">⏳</div>
+        <p className="dashboard-loading-text">Loading dashboard...</p>
       </div>
     );
   }
 
   return (
     <div className="dashboard">
-      <h2 style={{ color: 'white', marginBottom: '32px', fontSize: '32px', fontWeight: '800', letterSpacing: '-0.5px' }}>
-        Dashboard Overview
-      </h2>
+      <h2>Dashboard Overview</h2>
 
       {/* Stats Grid */}
-      <div className="dashboard-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', marginBottom: '32px' }}>
+      <div className="dashboard-grid">
         {statCards.map((card, index) => (
           <div className="stat-card" key={index}>
             <div className="stat-icon">{card.icon}</div>
             <div className="stat-label">{card.label}</div>
-            <div className="stat-value" style={{ background: card.gradient, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              {card.value.toLocaleString()}
-            </div>
+            <div className="stat-value">{card.value.toLocaleString()}</div>
           </div>
         ))}
       </div>
 
       {/* URL Management Tabs */}
-      <div className="stat-card" style={{ marginBottom: '24px' }}>
-
+      <div className="stat-card">
         {/* Tab Headers */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '2px solid #e2e8f0', paddingBottom: '16px', flexWrap: 'wrap' }}>
+        <div className="dashboard-tabs">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              style={{
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                fontWeight: '700',
-                fontSize: '14px',
-                background: activeTab === tab.id ? tab.activeGradient : '#f7fafc',
-                color: activeTab === tab.id ? 'white' : '#718096',
-                transition: 'all 0.2s',
-                boxShadow: activeTab === tab.id ? '0 4px 12px rgba(0,0,0,0.15)' : 'none'
-              }}
+              className={`dashboard-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
             >
               {tab.label} ({tab.count})
             </button>
@@ -171,75 +142,57 @@ function Dashboard({ onOpenURL }) {
         {activeTab === 'active' && (
           <div>
             {activeUrls.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#a0aec0' }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔗</div>
-                <p style={{ fontSize: '16px', fontWeight: '600' }}>No active URLs yet</p>
-                <p style={{ fontSize: '14px' }}>Create your first short URL!</p>
+              <div className="dashboard-empty">
+                <div className="dashboard-empty-icon">🔗</div>
+                <p className="dashboard-empty-title">No active URLs yet</p>
+                <p className="dashboard-empty-desc">Create your first short URL!</p>
               </div>
             ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div className="dashboard-table-wrapper">
+                <table className="dashboard-table">
                   <thead>
-                    <tr style={{ borderBottom: '2px solid #e2e8f0' }}>
+                    <tr>
                       {['SHORT URL', 'ORIGINAL URL', 'CLICKS', 'VERDICT', 'EXPIRES', 'CREATED', 'COPY', 'MANAGE'].map((h) => (
-                        <th key={h} style={{ textAlign: h === 'SHORT URL' || h === 'ORIGINAL URL' ? 'left' : 'center', padding: '12px', color: '#718096', fontWeight: '700', fontSize: '12px', letterSpacing: '0.5px' }}>
-                          {h}
-                        </th>
+                        <th key={h}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {activeUrls.map((url) => (
-                      <tr
-                        key={url.id}
-                        style={{ borderBottom: '1px solid #e2e8f0', transition: 'background 0.2s' }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = '#f7fafc'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
-                      >
-                        <td style={{ padding: '12px' }}>
-                          <a href={url.short_url} target="_blank" rel="noopener noreferrer"
-                            style={{ color: '#667eea', fontWeight: '600', fontFamily: 'monospace', fontSize: '14px', textDecoration: 'none' }}>
+                      <tr key={url.id}>
+                        <td>
+                          <a href={url.short_url} target="_blank" rel="noopener noreferrer">
                             /{url.short_code}
                           </a>
                         </td>
-                        <td style={{ padding: '12px', maxWidth: '220px' }}>
-                          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '13px', color: '#4a5568' }}>
-                            {url.original_url}
-                          </div>
+                        <td>
+                          <div className="dashboard-table-cell-ellipsis">{url.original_url}</div>
                         </td>
-                        <td style={{ textAlign: 'center', padding: '12px', fontWeight: '700', color: '#2d3748' }}>
-                          {url.clicks}
-                        </td>
-                        <td style={{ textAlign: 'center', padding: '12px' }}>
-                          <span style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: '700', background: url.verdict === 'SAFE' ? '#c6f6d5' : '#feebc8', color: url.verdict === 'SAFE' ? '#2f855a' : '#c05621' }}>
+                        <td style={{ textAlign: 'center', fontWeight: '700' }}>{url.clicks}</td>
+                        <td style={{ textAlign: 'center' }}>
+                          <span className={`dashboard-verdict ${url.verdict === 'SAFE' ? 'safe' : 'threat'}`}>
                             {url.verdict}
                           </span>
                         </td>
-                        <td style={{ textAlign: 'center', padding: '12px', fontSize: '13px' }}>
-                          {url.expires_at
-                            ? <span style={{ color: '#ed8936', fontWeight: '600' }}>{getExpiresIn(url.expires_at)}</span>
-                            : <span style={{ color: '#48bb78', fontWeight: '600' }}>Never</span>
-                          }
+                        <td style={{ textAlign: 'center' }}>
+                          {url.expires_at ? (
+                            <span className="dashboard-status-expired">{getExpiresIn(url.expires_at)}</span>
+                          ) : (
+                            <span className="dashboard-status-never">Never</span>
+                          )}
                         </td>
-                        <td style={{ textAlign: 'center', padding: '12px', fontSize: '13px', color: '#718096' }}>
-                          {getTimeAgo(url.created_at)}
+                        <td style={{ textAlign: 'center' }}>
+                          <span className="dashboard-status-time">{getTimeAgo(url.created_at)}</span>
                         </td>
-                        <td style={{ textAlign: 'center', padding: '12px' }}>
+                        <td style={{ textAlign: 'center' }}>
                           <button
                             onClick={() => copyToClipboard(url.short_url, url.id)}
-                            style={{
-                              background: copied === url.id ? 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                              color: 'white', border: 'none', borderRadius: '8px',
-                              padding: '6px 12px', cursor: 'pointer', fontSize: '12px',
-                              fontWeight: '600', transition: 'all 0.2s', whiteSpace: 'nowrap'
-                            }}
+                            className={`dashboard-btn dashboard-btn-copy ${copied === url.id ? 'copied' : ''}`}
                           >
                             {copied === url.id ? '✅ Copied!' : '📋 Copy'}
                           </button>
                         </td>
-                        <td style={{ textAlign: 'center', padding: '12px' }}>
-                          {manageBtn(url.short_code)}
-                        </td>
+                        <td style={{ textAlign: 'center' }}>{manageBtn(url.short_code)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -253,55 +206,44 @@ function Dashboard({ onOpenURL }) {
         {activeTab === 'expired' && (
           <div>
             {expiredUrls.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#a0aec0' }}>
-                <div style={{ fontSize: '48px', marginBottom: '16px' }}>⏰</div>
-                <p style={{ fontSize: '16px', fontWeight: '600' }}>No expired URLs yet</p>
-                <p style={{ fontSize: '14px' }}>Links with expiration dates will appear here.</p>
+              <div className="dashboard-empty">
+                <div className="dashboard-empty-icon">⏰</div>
+                <p className="dashboard-empty-title">No expired URLs yet</p>
+                <p className="dashboard-empty-desc">Links with expiration dates will appear here.</p>
               </div>
             ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <div className="dashboard-table-wrapper">
+                <table className="dashboard-table">
                   <thead>
-                    <tr style={{ borderBottom: '2px solid #e2e8f0' }}>
+                    <tr>
                       {['SHORT URL', 'ORIGINAL URL', 'CLICKS', 'EXPIRED ON', 'CREATED', 'MANAGE'].map((h) => (
-                        <th key={h} style={{ textAlign: h === 'SHORT URL' || h === 'ORIGINAL URL' ? 'left' : 'center', padding: '12px', color: '#718096', fontWeight: '700', fontSize: '12px', letterSpacing: '0.5px' }}>
-                          {h}
-                        </th>
+                        <th key={h}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {expiredUrls.map((url) => (
-                      <tr
-                        key={url.id}
-                        style={{ borderBottom: '1px solid #e2e8f0', opacity: 0.65 }}
-                        onMouseEnter={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.background = '#f7fafc'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.opacity = '0.65'; e.currentTarget.style.background = 'white'; }}
-                      >
-                        <td style={{ padding: '12px' }}>
-                          <span style={{ color: '#718096', fontFamily: 'monospace', fontSize: '14px', textDecoration: 'line-through' }}>
-                            /{url.short_code}
+                      <tr key={url.id} className="expired">
+                        <td>
+                          <span className="dashboard-status-expired">/{url.short_code}</span>
+                        </td>
+                        <td>
+                          <div className="dashboard-table-cell-ellipsis">{url.original_url}</div>
+                        </td>
+                        <td style={{ textAlign: 'center', fontWeight: '700' }}>{url.clicks}</td>
+                        <td style={{ textAlign: 'center', color: 'var(--lf-dashboard-pink)' }}>
+                          <span style={{ fontWeight: '600', fontSize: '13px' }}>
+                            {new Date(url.expires_at).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
                           </span>
                         </td>
-                        <td style={{ padding: '12px', maxWidth: '220px' }}>
-                          <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '13px', color: '#4a5568' }}>
-                            {url.original_url}
-                          </div>
+                        <td style={{ textAlign: 'center' }}>
+                          <span className="dashboard-status-time">{getTimeAgo(url.created_at)}</span>
                         </td>
-                        <td style={{ textAlign: 'center', padding: '12px', fontWeight: '700', color: '#2d3748' }}>
-                          {url.clicks}
-                        </td>
-                        <td style={{ textAlign: 'center', padding: '12px' }}>
-                          <span style={{ color: '#e53e3e', fontWeight: '600', fontSize: '13px' }}>
-                            {new Date(url.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                          </span>
-                        </td>
-                        <td style={{ textAlign: 'center', padding: '12px', fontSize: '13px', color: '#718096' }}>
-                          {getTimeAgo(url.created_at)}
-                        </td>
-                        <td style={{ textAlign: 'center', padding: '12px' }}>
-                          {manageBtn(url.short_code)}
-                        </td>
+                        <td style={{ textAlign: 'center' }}>{manageBtn(url.short_code)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -312,9 +254,7 @@ function Dashboard({ onOpenURL }) {
         )}
 
         {/* Threats Tab */}
-        {activeTab === 'threats' && (
-          <ThreatFeed threats={threats} />
-        )}
+        {activeTab === 'threats' && <ThreatFeed threats={threats} />}
       </div>
     </div>
   );

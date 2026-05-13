@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import Homepage from './components/Homepage';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
 import CreateShortURL from './components/CreateShortURL';
@@ -11,6 +12,7 @@ function AppContent() {
   const { user, logout, loading } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedShortCode, setSelectedShortCode] = useState(null);
+  const [showHomepage, setShowHomepage] = useState(true);
 
   // Navigate to URL detail view
   const openURLDetail = (shortCode) => {
@@ -36,11 +38,36 @@ function AppContent() {
   }
 
   if (!user) {
-    return <Auth onSuccess={() => setActiveTab('dashboard')} />;
+    if (showHomepage) {
+      return <Homepage onNavigateToAuth={() => setShowHomepage(false)} />;
+    }
+    return <Auth onSuccess={() => setActiveTab('dashboard')} onBackToHome={() => setShowHomepage(true)} />;
   }
 
   return (
     <div className="App">
+      {/* Background Particles */}
+      <div className="app-particles" aria-hidden="true">
+        {Array.from({ length: 28 }).map((_, i) => (
+          <span
+            key={i}
+            className="app-particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${2 + Math.random() * 3}px`,
+              height: `${2 + Math.random() * 3}px`,
+              animationDelay: `${Math.random() * 8}s`,
+              animationDuration: `${14 + Math.random() * 12}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Floating Glow Blobs */}
+      <div className="app-bg-glow app-bg-glow-a" />
+      <div className="app-bg-glow app-bg-glow-b" />
+
       <header className="app-header">
         <div className="header-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
