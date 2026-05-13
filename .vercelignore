@@ -1,0 +1,22 @@
+# Ignore Python backend files
+app.py
+config.py
+models.py
+utils.py
+cache.py
+threat_detection.py
+train_ml_model.py
+worker.py
+test*.py
+requirements.txt
+*.pyc
+__pycache__/
+venv/
+.env
+.env.local
+.git
+.gitignore
+docker*
+*.md
+node_modules/
+frontend/node_modules/
