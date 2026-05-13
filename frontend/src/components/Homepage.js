@@ -67,7 +67,7 @@ const faqs = [
   }
 ];
 
-function Homepage({ onNavigateToAuth }) {
+function Homepage({ onNavigateToAuth, onNavigateToSignup }) {
   const [particles, setParticles] = useState([]);
   const [activeFaq, setActiveFaq] = useState(0);
 
@@ -142,7 +142,7 @@ function Homepage({ onNavigateToAuth }) {
         </nav>
         <div className="lf-nav-actions">
           <button className="lf-btn lf-btn-ghost" onClick={onNavigateToAuth}>Log in</button>
-          <button className="lf-btn lf-btn-primary" onClick={onNavigateToAuth}>Join Now</button>
+          <button className="lf-btn lf-btn-primary" onClick={onNavigateToSignup}>Join Now</button>
         </div>
       </header>
 
@@ -306,19 +306,51 @@ function Homepage({ onNavigateToAuth }) {
         <h2>Create safer short links with LinkFort.</h2>
         <p>Shorten URLs, review destination risk, and track every link from one clean dashboard.</p>
         <div className="lf-cta-row" style={{ justifyContent: 'center' }}>
-          <button className="lf-btn lf-btn-primary" onClick={onNavigateToAuth}>Join Now</button>
+          <button className="lf-btn lf-btn-primary" onClick={onNavigateToSignup}>Join Now</button>
           <a className="lf-link" href="#features">View Features</a>
         </div>
       </section>
 
       <footer className="lf-footer">
-        <p>LinkFort - Shorten, protect, and track your links.</p>
-        <div className="lf-footer-links">
-          <a href="#overview">Overview</a>
-          <a href="#features">Features</a>
-          <a href="#security">Security</a>
-          <a href="#analytics">Analytics</a>
-          <a href="#faq">FAQ</a>
+        <div className="lf-footer-shell">
+          <div className="lf-footer-brand">
+            <div className="lf-footer-logo">LinkFort</div>
+            <p>
+              Secure short links with risk checks, click tracking, and a premium dashboard experience.
+            </p>
+            <div className="lf-footer-badges">
+              <span>Threat Detection</span>
+              <span>Click Analytics</span>
+              <span>Expiration Control</span>
+            </div>
+          </div>
+
+          <div className="lf-footer-column">
+            <h3>Product</h3>
+            <a href="#overview">Overview</a>
+            <a href="#features">Features</a>
+            <a href="#security">Security</a>
+            <a href="#analytics">Analytics</a>
+          </div>
+
+          <div className="lf-footer-column">
+            <h3>Support</h3>
+            <a href="#faq">FAQ</a>
+            <a href="mailto:support@linkfort.local">Contact Support</a>
+            <a href="#overview">Getting Started</a>
+            <a href="#security">Safety Guide</a>
+          </div>
+
+          <div className="lf-footer-column">
+            <h3>Actions</h3>
+            <button className="lf-footer-action" onClick={onNavigateToSignup}>Join Now</button>
+            <button className="lf-footer-action secondary" onClick={onNavigateToAuth}>Log in</button>
+          </div>
+        </div>
+
+        <div className="lf-footer-bottom">
+          <span>© 2026 LinkFort</span>
+          <span>Shorten, protect, and track your links.</span>
         </div>
       </footer>
     </div>

@@ -78,6 +78,45 @@ body::before {
   animation-delay: 2.5s;
 }
 
+/* Logout button animation and styles */
+.btn-logout {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  will-change: transform;
+  animation: logoutIdle 3.6s ease-in-out infinite;
+}
+
+@keyframes logoutIdle {
+  0% { transform: translateY(0); box-shadow: 0 0 0 rgba(0,0,0,0); }
+  50% { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.20); }
+  100% { transform: translateY(0); box-shadow: 0 0 0 rgba(0,0,0,0); }
+}
+
+.btn-logout:hover {
+  transform: translateY(-4px) scale(1.02);
+  background: linear-gradient(90deg, rgba(0,217,255,0.12), rgba(0,255,136,0.06));
+  box-shadow: 0 8px 30px rgba(0,217,255,0.08), 0 2px 8px rgba(0,0,0,0.4);
+  animation-play-state: paused;
+}
+
+.btn-logout:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0,217,255,0.08);
+}
+
+.btn-logout-emoji { display: inline-block; transition: transform 220ms ease; }
+.btn-logout:hover .btn-logout-emoji { transform: rotate(-12deg) translateY(-2px); }
+
 .app-header {
   background: rgba(17, 27, 62, 0.4);
   backdrop-filter: blur(10px);
@@ -442,5 +481,94 @@ input[type="text"]:focus, input[type="url"]:focus {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* App Footer */
+.app-footer {
+  margin-top: 48px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(0, 217, 255, 0.15);
+  border-radius: 22px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(9, 15, 36, 0.94), rgba(10, 16, 41, 0.98));
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(16px);
+}
+
+.app-footer-shell {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 1.2rem;
+  padding: 1.5rem;
+}
+
+.app-footer-brand p {
+  margin: 0.75rem 0 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+  max-width: 36ch;
+}
+
+.app-footer-logo {
+  font-size: 1.18rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  color: white;
+}
+
+.app-footer-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.app-footer-badges span,
+.app-footer-column span {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.42rem 0.72rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 217, 255, 0.16);
+  color: white;
+  font-size: 0.82rem;
+}
+
+.app-footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.app-footer-column h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.92rem;
+  color: #fff;
+}
+
+.app-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem 1.2rem;
+  border-top: 1px solid rgba(0, 217, 255, 0.12);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .app-footer-shell {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .app-footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    padding: 0.75rem 1rem;
   }
 }

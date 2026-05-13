@@ -17,19 +17,28 @@ import os
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# ✅ FIX: JWT Configuration must be set before JWTManager(app)
-app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY', 'super-secret-linkfort-key-2024')
+# ✅ JWT Configuration (must be before JWTManager)
+if not app.config.get('SECRET_KEY'):
+    print("⚠️  WARNING: SECRET_KEY not set in environment")
+    app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
+
+app.config['JWT_SECRET_KEY'] = app.config['SECRET_KEY']
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=24)
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
 app.config['JWT_HEADER_NAME'] = 'Authorization'
 app.config['JWT_HEADER_TYPE'] = 'Bearer'
 
-# Enable CORS - ✅ FIX: Allow Authorization headers
+# ✅ CORS Configuration - Support multiple origins for different environments
+cors_origins = [
+    "http://localhost:3000",  # Local dev
+    os.getenv('FRONTEND_URL', 'http://localhost:3000'),  # Production frontend
+]
 CORS(app, resources={
     r"/api/*": {
-        "origins": ["http://localhost:3000"],
+        "origins": cors_origins,
         "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
     }
 })
 
@@ -43,7 +52,7 @@ db.init_app(app)
 # Initialize everything
 with app.app_context():
     db.create_all()
-    print("✅ Database tables created!")
+    print("[OK] Database tables created!")
     init_redis()
     init_threat_detection()
 
@@ -573,4 +582,9 @@ def delete_url(short_code):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # ✅ Use config DEBUG flag (set via FLASK_ENV environment variable)
+    app.run(
+        host='0.0.0.0',
+        port=int(os.getenv('PORT', 5000)),
+        debug=app.config.get('DEBUG', False)
+    )

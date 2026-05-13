@@ -16,11 +16,11 @@ def init_redis():
     try:
         redis_client = redis.from_url(redis_url, decode_responses=True)
         redis_client.ping()
-        print("✅ Redis connected!")
+        print("[OK] Redis connected!")
         return True
     except Exception as e:
-        print(f"⚠️  Redis connection failed: {e}")
-        print("⚠️  Running without cache (slower redirects)")
+        print(f"[WARN] Redis connection failed: {e}")
+        print("[WARN] Running without cache (slower redirects)")
         redis_client = None
         return False
 

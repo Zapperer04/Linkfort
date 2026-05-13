@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_BASE = 'http://localhost:5000';
+// ✅ PRODUCTION: Use environment variable for API base URL
+// Falls back to localhost for local development
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
 
 function CreateShortURL() {
   const [url, setUrl] = useState('');

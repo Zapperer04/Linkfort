@@ -180,11 +180,11 @@ class Layer2MLClassifier:
                     self.feature_names = pickle.load(f)
                 
                 self.available = True
-                print("  ✅ Layer 2: ML Model loaded successfully")
+                print("  [OK] Layer 2: ML Model loaded successfully")
             else:
-                print("  ⚠️  Layer 2: ML model files not found (run train_ml_model.py)")
+                print("  [WARN] Layer 2: ML model files not found (run train_ml_model.py)")
         except Exception as e:
-            print(f"  ⚠️  Layer 2: Failed to load ML model: {e}")
+            print(f"  [WARN] Layer 2: Failed to load ML model: {e}")
     
     def _calculate_entropy(self, text):
         """Calculate Shannon entropy"""
@@ -282,13 +282,13 @@ class Layer3ExternalVerifier:
         self.available = bool(self.virustotal_key or self.google_key)
         
         if self.available:
-            print(f"  ✅ Layer 3: External verification available")
+            print(f"  [OK] Layer 3: External verification available")
             if self.virustotal_key:
                 print(f"    - VirusTotal API enabled")
             if self.google_key:
                 print(f"    - Google Safe Browsing enabled")
         else:
-            print(f"  ⚠️  Layer 3: No API keys configured")
+            print(f"  [WARN] Layer 3: No API keys configured")
 
     def _check_virustotal(self, url: str) -> Tuple[bool, int, int]:
         """
@@ -495,18 +495,18 @@ class ThreatDetector:
         self.layer2 = Layer2MLClassifier()
         self.layer3 = Layer3ExternalVerifier()
         
-        print("🛡️  Threat Detection System initialized")
-        print("  ✅ Layer 1: Pattern Matching (Active)")
+        print("[SHIELD] Threat Detection System initialized")
+        print("  [OK] Layer 1: Pattern Matching (Active)")
         
         if self.layer2.available:
-            print("  ✅ Layer 2: ML Classification (Active - XGBoost trained on real phishing data)")
+            print("  [OK] Layer 2: ML Classification (Active - XGBoost trained on real phishing data)")
         else:
-            print("  ⏳ Layer 2: ML Classification (Not available)")
+            print("  [PENDING] Layer 2: ML Classification (Not available)")
             
         if self.layer3.available:
-            print("  ✅ Layer 3: External Verification (Active)")
+            print("  [OK] Layer 3: External Verification (Active)")
         else:
-            print("  ⏳ Layer 3: External Verification (No API keys configured)")
+            print("  [PENDING] Layer 3: External Verification (No API keys configured)")
     
     def analyze(self, url: str) -> Tuple[float, str, Dict]:
         """

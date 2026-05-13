@@ -63,14 +63,11 @@ class URL(db.Model):
         return datetime.utcnow() > self.expires_at
     
     def to_dict(self):
-        from flask import current_app, request
-        # Prefer building the short URL from the incoming request host (supports proxies)
-        try:
-            host_base = request.host_url.rstrip('/')
-        except RuntimeError:
-            host_base = None
-
-        base_url = host_base or current_app.config.get('BASE_URL', 'http://localhost:5000')
+        from flask import current_app
+        # ✅ PRODUCTION: Use SHORT_URL_BASE from config (can be overridden via env var)
+        # This ensures short URLs use the production domain regardless of request source
+        base_url = current_app.config.get('SHORT_URL_BASE', 'http://localhost:5000')
+        
         return {
             'id': self.id,
             'original_url': self.original_url,

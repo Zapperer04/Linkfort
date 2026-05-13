@@ -1,0 +1,50 @@
+services:
+  # Backend API Service
+  - type: web
+    name: linkfort-api
+    runtime: python
+    pythonVersion: "3.11"
+    buildCommand: pip install -r requirements.txt
+    startCommand: >
+      gunicorn --workers=2 --worker-class=sync --bind=0.0.0.0:$PORT --timeout=30 app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: linkfort-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: linkfort-cache
+          property: connectionString
+      - key: BASE_URL
+        value: https://linkfort.dev
+      - key: SHORT_URL_BASE
+        value: https://lf.linkfort.dev
+      - key: API_BASE_URL
+        value: https://api.linkfort.dev
+      - key: FRONTEND_URL
+        value: https://linkfort.dev
+
+  # PostgreSQL Database
+  - type: pserv
+    name: linkfort-db
+    runtime: postgres15
+    ipAllowList: []
+    databaseName: linkfort
+    user: linkfort_user
+
+  # Redis Cache
+  - type: redis
+    name: linkfort-cache
+    runtime: redis7
+    plan: starter
+    ipAllowList: []
+
+databases:
+  - name: linkfort-db
+    database: linkfort
+    user: linkfort_user

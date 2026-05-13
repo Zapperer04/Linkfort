@@ -256,6 +256,7 @@ function Dashboard({ onOpenURL }) {
         {/* Threats Tab */}
         {activeTab === 'threats' && <ThreatFeed threats={threats} />}
       </div>
+
     </div>
   );
 }

@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: linkfort-db
+    environment:
+      POSTGRES_USER: linkfort_user
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: linkfort
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U linkfort_user -d linkfort"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: linkfort-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Flask Backend
+  backend:
+    build: .
+    container_name: linkfort-api
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: development
+      DATABASE_URL: postgresql://linkfort_user:postgres@postgres:5432/linkfort
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: dev-secret-key-change-in-production
+      BASE_URL: http://localhost:5000
+      SHORT_URL_BASE: http://localhost:5000
+      API_BASE_URL: http://localhost:5000
+      FRONTEND_URL: http://localhost:3000
+      VIRUSTOTAL_API_KEY: ${VIRUSTOTAL_API_KEY}
+      GOOGLE_SAFE_BROWSING_API_KEY: ${GOOGLE_SAFE_BROWSING_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: flask run --host 0.0.0.0
+
+volumes:
+  postgres_data:
+  redis_data:

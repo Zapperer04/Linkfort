@@ -13,6 +13,7 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedShortCode, setSelectedShortCode] = useState(null);
   const [showHomepage, setShowHomepage] = useState(true);
+  const [authMode, setAuthMode] = useState('login');
 
   // Navigate to URL detail view
   const openURLDetail = (shortCode) => {
@@ -39,9 +40,26 @@ function AppContent() {
 
   if (!user) {
     if (showHomepage) {
-      return <Homepage onNavigateToAuth={() => setShowHomepage(false)} />;
+      return (
+        <Homepage
+          onNavigateToAuth={() => {
+            setAuthMode('login');
+            setShowHomepage(false);
+          }}
+          onNavigateToSignup={() => {
+            setAuthMode('signup');
+            setShowHomepage(false);
+          }}
+        />
+      );
     }
-    return <Auth onSuccess={() => setActiveTab('dashboard')} onBackToHome={() => setShowHomepage(true)} />;
+    return (
+      <Auth
+        initialMode={authMode}
+        onSuccess={() => setActiveTab('dashboard')}
+        onBackToHome={() => setShowHomepage(true)}
+      />
+    );
   }
 
   return (
@@ -86,21 +104,11 @@ function AppContent() {
             </div>
             <button
               onClick={logout}
-              style={{
-                background: 'rgba(255,255,255,0.2)',
-                border: '1px solid rgba(255,255,255,0.3)',
-                color: 'white',
-                padding: '8px 16px',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '14px',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={e => e.target.style.background = 'rgba(255,255,255,0.3)'}
-              onMouseLeave={e => e.target.style.background = 'rgba(255,255,255,0.2)'}
+              className="btn-logout"
+              aria-label="Logout"
             >
-              🚪 Logout
+              <span className="btn-logout-emoji">🚪</span>
+              <span className="btn-logout-text">Logout</span>
             </button>
           </div>
         </div>
@@ -146,17 +154,49 @@ function AppContent() {
         </div>
       </main>
 
-      <footer style={{
-        textAlign: 'center',
-        padding: '20px',
-        color: 'rgba(255, 255, 255, 0.8)',
-        fontSize: '14px',
-        fontWeight: '500'
-      }}>
-        <p>Built with ❤️ using Flask + React + PostgreSQL + Redis</p>
-        <p style={{ fontSize: '12px', marginTop: '8px', opacity: 0.7 }}>
-          Multi-layer threat detection • Bloom filters • Rate limiting • Real-time analytics
-        </p>
+      <footer className="app-footer">
+        <div className="app-footer-shell">
+          <div className="app-footer-brand">
+            <div className="app-footer-logo">🛡️ LinkFort</div>
+            <p>
+              Secure URL shortening with real-time threat detection, click analytics, and complete control.
+            </p>
+            <div className="app-footer-badges">
+              <span>Multi-layer Detection</span>
+              <span>Rate Limiting</span>
+              <span>Real-time Analytics</span>
+            </div>
+          </div>
+
+          <div className="app-footer-column">
+            <h3>Built With</h3>
+            <span>Flask Backend</span>
+            <span>React Frontend</span>
+            <span>PostgreSQL + Redis</span>
+            <span>VirusTotal API</span>
+          </div>
+
+          <div className="app-footer-column">
+            <h3>Security</h3>
+            <span>Threat Detection</span>
+            <span>Safe / Warning / Blocked</span>
+            <span>Bloom Filter Cache</span>
+            <span>JWT Authentication</span>
+          </div>
+
+          <div className="app-footer-column">
+            <h3>Features</h3>
+            <span>Short URL Creation</span>
+            <span>Custom Aliases</span>
+            <span>Link Expiration</span>
+            <span>Click Tracking</span>
+          </div>
+        </div>
+
+        <div className="app-footer-bottom">
+          <span>© 2026 LinkFort</span>
+          <span>Secure, protected, tracked.</span>
+        </div>
       </footer>
     </div>
   );

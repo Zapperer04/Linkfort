@@ -2,7 +2,10 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext(null);
-const API_BASE = 'http://localhost:5000';
+
+// ✅ PRODUCTION: Use environment variable for API base URL
+// Falls back to localhost for local development
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
 
 // Set token in axios headers globally
 const setAxiosToken = (token) => {
