@@ -192,11 +192,12 @@ def expired_token_callback(jwt_header, jwt_payload):
 @app.route('/', methods=['GET'])
 def root():
     """Landing endpoint for deployed backend service"""
-    # Browser users should land on the frontend app; API clients keep JSON.
+    # Redirect is opt-in to avoid broken redirects when frontend domain is misconfigured.
     accept_header = request.headers.get('Accept', '')
     frontend_url = current_app.config.get('FRONTEND_URL')
+    redirect_to_frontend = current_app.config.get('REDIRECT_TO_FRONTEND', False)
 
-    if frontend_url and 'text/html' in accept_header:
+    if redirect_to_frontend and frontend_url and 'text/html' in accept_header:
         return redirect(frontend_url, code=302)
 
     return jsonify({
@@ -204,6 +205,7 @@ def root():
         'status': 'running',
         'health': '/api/health',
         'frontend': frontend_url,
+        'redirect_to_frontend': redirect_to_frontend,
         'message': 'Backend is live. Use /api/* endpoints for application access.'
     }), 200
 

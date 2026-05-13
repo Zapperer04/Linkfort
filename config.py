@@ -18,6 +18,7 @@ class Config:
     SHORT_URL_BASE = os.getenv('SHORT_URL_BASE', os.getenv('BASE_URL', 'http://localhost:5000'))
     API_BASE_URL = os.getenv('API_BASE_URL', os.getenv('BASE_URL', 'http://localhost:5000'))
     FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+    REDIRECT_TO_FRONTEND = os.getenv('REDIRECT_TO_FRONTEND', 'false').lower() == 'true'
     
     # Environment
     FLASK_ENV = os.getenv('FLASK_ENV', 'development')
@@ -28,4 +29,4 @@ class Config:
     GOOGLE_SAFE_BROWSING_API_KEY = os.getenv('GOOGLE_SAFE_BROWSING_API_KEY')
     
     # Redis
-    REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+    REDIS_URL = os.getenv('REDIS_URL')

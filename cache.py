@@ -11,7 +11,17 @@ redis_client = None
 def init_redis():
     """Initialize Redis connection"""
     global redis_client
-    redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+    redis_url = os.getenv('REDIS_URL')
+
+    if not redis_url:
+        print("[INFO] REDIS_URL not set. Running without cache/rate-limit storage.")
+        redis_client = None
+        return False
+
+    if os.getenv('FLASK_ENV') == 'production' and 'localhost' in redis_url:
+        print("[WARN] REDIS_URL points to localhost in production. Skipping Redis.")
+        redis_client = None
+        return False
     
     try:
         redis_client = redis.from_url(redis_url, decode_responses=True)
