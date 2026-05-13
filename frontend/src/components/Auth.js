@@ -2,8 +2,8 @@
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
-function Auth({ onSuccess, onBackToHome, initialMode = 'login' }) {
-  const [isLogin, setIsLogin] = useState(initialMode !== 'signup');
+function Auth({ onSuccess, onBackToHome }) {
+  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -103,7 +103,6 @@ function Auth({ onSuccess, onBackToHome, initialMode = 'login' }) {
               {['Sign In', 'Sign Up'].map((tab, idx) => (
                 <button
                   key={idx}
-                  type="button"
                   onClick={() => { setIsLogin(idx === 0); setError(''); }}
                   className={`lf-auth-toggle-btn ${(idx === 0 ? isLogin : !isLogin) ? 'active' : ''}`}
                 >
@@ -161,8 +160,7 @@ function Auth({ onSuccess, onBackToHome, initialMode = 'login' }) {
 
             <div className="lf-auth-footer">
               <span>{isLogin ? "Don't have an account? " : 'Already have an account? '}</span>
-                <button
-                  type="button"
+              <button
                 onClick={() => { setIsLogin(!isLogin); setError(''); }}
                 className="lf-auth-toggle-link"
               >
