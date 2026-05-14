@@ -486,14 +486,15 @@ input[type="text"]:focus, input[type="url"]:focus {
 
 /* App Footer */
 .app-footer {
-  margin-top: 48px;
-  margin-bottom: 24px;
-  border: 1px solid rgba(0, 217, 255, 0.15);
-  border-radius: 22px;
+  margin-top: 64px;
+  margin-bottom: 0;
+  border-top: 1px solid rgba(0, 217, 255, 0.15);
+  border-radius: 0;
   overflow: hidden;
   background: linear-gradient(180deg, rgba(9, 15, 36, 0.94), rgba(10, 16, 41, 0.98));
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(16px);
+  width: 100%;
 }
 
 .app-footer-shell {

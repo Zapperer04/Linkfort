@@ -626,13 +626,15 @@ html {
 }
 
 .lf-footer {
-  margin: 1.4rem 0 2rem;
-  border: 1px solid var(--lf-panel-border);
-  border-radius: 22px;
+  margin-top: 3rem;
+  margin-bottom: 0;
+  border-top: 1px solid var(--lf-panel-border);
+  border-radius: 0;
   overflow: hidden;
   background: linear-gradient(180deg, rgba(9, 15, 36, 0.92), rgba(10, 16, 41, 0.98));
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(16px);
+  width: 100%;
 }
 
 .lf-footer-shell {

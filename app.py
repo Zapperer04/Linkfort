@@ -8,6 +8,7 @@ from utils import generate_short_code, generate_random_code
 from cache import init_redis, get_cached_url, set_cached_url, check_rate_limit
 from threat_detection import init_threat_detection, calculate_threat_score
 from urllib.parse import urlparse
+from sqlalchemy import func
 import validators
 import traceback
 from datetime import datetime, timedelta
@@ -29,13 +30,9 @@ app.config['JWT_HEADER_NAME'] = 'Authorization'
 app.config['JWT_HEADER_TYPE'] = 'Bearer'
 
 # ✅ CORS Configuration - Support multiple origins for different environments
-cors_origins = [
-    "http://localhost:3000",  # Local dev
-    os.getenv('FRONTEND_URL', 'http://localhost:3000'),  # Production frontend
-]
 CORS(app, resources={
     r"/api/*": {
-        "origins": cors_origins,
+        "origins": "*",
         "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True
@@ -496,7 +493,6 @@ def get_dashboard_stats():
 def get_analytics():
     """Get analytics data - filtered by logged in user"""
     try:
-        from sqlalchemy import func
         user_id = int(get_jwt_identity())
         threat_trends = []
         for i in range(6, -1, -1):
@@ -564,7 +560,6 @@ def get_url_detail(short_code):
     recent_clicks = Click.query.filter_by(url_id=url.id).order_by(Click.clicked_at.desc()).limit(20).all()
     clicks_data = [{'id': c.id, 'clicked_at': c.clicked_at.isoformat(), 'ip_address': c.ip_address} for c in recent_clicks]
 
-    from sqlalchemy import func
     click_trend = []
     for i in range(6, -1, -1):
         day = datetime.utcnow() - timedelta(days=i)
