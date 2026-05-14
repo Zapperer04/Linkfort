@@ -32,8 +32,6 @@ app.config['JWT_HEADER_TYPE'] = 'Bearer'
 cors_origins = [
     "http://localhost:3000",  # Local dev
     os.getenv('FRONTEND_URL', 'http://localhost:3000'),  # Production frontend
-    "https://linkfort.vercel.app",  # Deployed Vercel frontend
-    r"https://.*\.vercel\.app",  # Vercel preview deployments
 ]
 CORS(app, resources={
     r"/api/*": {
@@ -224,21 +222,9 @@ def register():
 
     if not email or not password:
         return jsonify({'error': 'Email and password are required'}), 400
-    if len(password) < 6: 
-        return jsonify({'error': 'Password must be at least 6 characters'}), 400
-    if '@' not in email: 
-        return jsonify({'error': 'Invalid email address'}), 400
-    if User.query.filter_by(email=email).first(): 
-        return jsonify({'error': 'Email already registered'}), 400
-
-    # Password strength validation
-    has_upper = any(c.isupper() for c in password)
-    has_lower = any(c.islower() for c in password)
-    has_digit = any(c.isdigit() for c in password)
-    strength_score = sum([has_upper, has_lower, has_digit, len(password) >= 8])
-    
-    if strength_score < 2:
-        return jsonify({'error': 'Password too weak. Use uppercase, lowercase, and numbers'}), 400
+    if len(password) < 6: return jsonify({'error': 'Password must be at least 6 characters'}), 400
+    if '@' not in email: return jsonify({'error': 'Invalid email address'}), 400
+    if User.query.filter_by(email=email).first(): return jsonify({'error': 'Email already registered'}), 400
 
     suffix = 1
     while User.query.filter_by(username=username).first():
@@ -387,43 +373,83 @@ def shorten_url():
 @app.route('/<short_code>', methods=['GET'])
 def redirect_url(short_code):
     """Redirect with threat protection, click tracking, expiration and active check"""
+    print(f"📍 Redirect attempt for: {short_code}")
+    
     cached = get_cached_url(short_code)
     if cached:
         print(f"✅ Cache HIT for {short_code}")
         url = URL.query.get(cached['id'])
-        if not url: return jsonify({'error': 'Short URL not found'}), 404
+        if not url: 
+            print(f"❌ URL ID {cached['id']} not found in DB")
+            return jsonify({'error': 'Short URL not found'}), 404
 
         # ✅ NEW: Check if disabled
-        if not url.is_active: return render_template_string(DISABLED_PAGE), 410
+        if not url.is_active:
+            print(f"⚠️ URL {short_code} is disabled")
+            return render_template_string(DISABLED_PAGE), 410
 
         if url.is_url_expired():
+            print(f"⏰ URL {short_code} expired")
             return render_template_string(EXPIRED_PAGE, expired_at=url.expires_at.strftime('%B %d, %Y at %H:%M UTC'))
 
         if cached.get('threat_verdict') == 'WARN':
+            print(f"🚨 Threat warning for {short_code}")
             return render_template_string(WARNING_PAGE, url=url.original_url, score=f"{url.threat_score:.2f}", reasons=url.threat_details.get('all_reasons', []))
 
         url.click_count += 1
         db.session.add(Click(url_id=url.id, ip_address=get_client_ip()))
         db.session.commit()
-        return redirect(cached['original_url'], code=302)
+        print(f"✅ Redirecting {short_code} -> {url.original_url}")
+        return redirect(url.original_url, code=302)
 
-    print(f"⚠️  Cache MISS for {short_code}")
+    print(f"⚠️  Cache MISS for {short_code}, querying DB...")
+    # Try exact match first
     url = URL.query.filter_by(short_code=short_code).first()
-    if not url: return jsonify({'error': 'Short URL not found'}), 404
+    
+    # If not found, try case-insensitive match (in case there's an issue with case)
+    if not url:
+        print(f"⚠️ Exact match failed, trying case-insensitive...")
+        all_urls = URL.query.all()
+        for u in all_urls:
+            if u.short_code.lower() == short_code.lower():
+                url = u
+                print(f"✅ Found via case-insensitive match: {u.short_code}")
+                break
+    
+    if not url: 
+        print(f"❌ Short code '{short_code}' not found in database")
+        # Debug: list all available short codes
+        all_codes = [u.short_code for u in URL.query.all()]
+        print(f"📋 Available short codes: {all_codes}")
+        # Help debug: check if it's an ID instead
+        try:
+            url_id = int(short_code)
+            url = URL.query.get(url_id)
+            if url:
+                print(f"⚠️ Found URL by ID {url_id}, short_code is '{url.short_code}'")
+                return redirect(f"/{url.short_code}", code=301)
+        except:
+            pass
+        return jsonify({'error': f'Short URL "{short_code}" not found'}), 404
 
     # ✅ NEW: Check if disabled
-    if not url.is_active: return render_template_string(DISABLED_PAGE), 410
+    if not url.is_active:
+        print(f"⚠️ URL {short_code} is disabled")
+        return render_template_string(DISABLED_PAGE), 410
 
     if url.is_url_expired():
+        print(f"⏰ URL {short_code} expired")
         return render_template_string(EXPIRED_PAGE, expired_at=url.expires_at.strftime('%B %d, %Y at %H:%M UTC'))
 
     if url.threat_verdict == 'WARN':
+        print(f"🚨 Threat warning for {short_code}")
         return render_template_string(WARNING_PAGE, url=url.original_url, score=f"{url.threat_score:.2f}", reasons=url.threat_details.get('all_reasons', []))
 
     set_cached_url(short_code, {'original_url': url.original_url, 'id': url.id, 'threat_verdict': url.threat_verdict})
     url.click_count += 1
     db.session.add(Click(url_id=url.id, ip_address=get_client_ip()))
     db.session.commit()
+    print(f"✅ Redirecting {short_code} -> {url.original_url}")
     return redirect(url.original_url, code=302)
 
 

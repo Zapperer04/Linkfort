@@ -252,20 +252,83 @@ function CreateShortURL() {
         {/* Success Result */}
         {result && !error && (
           <div className="result-box result-success">
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: '700', color: '#2f855a' }}>
+            <h3 style={{ margin: '0 0 24px 0', fontSize: '18px', fontWeight: '700', color: '#2f855a' }}>
               ✅ URL Shortened Successfully
-              {result.custom_code_used && (
-                <span style={{ fontSize: '14px', fontWeight: '500', marginLeft: '8px', color: '#38a169' }}>
-                  (Custom code used!)
-                </span>
-              )}
             </h3>
             
-            <div className="short-url-box">
-              <strong>Short URL:</strong>{' '}
-              <a href={result.data.short_url} target="_blank" rel="noopener noreferrer">
+            {/* Prominent Short URL Display */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%)',
+              border: '2px solid #48bb78',
+              borderRadius: '16px',
+              padding: '24px 20px',
+              marginBottom: '24px',
+              textAlign: 'center'
+            }}>
+              <div style={{ fontSize: '13px', color: '#718096', marginBottom: '12px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Your Short Link
+              </div>
+              
+              <div style={{
+                fontSize: '28px',
+                fontWeight: '800',
+                color: '#2d3748',
+                wordBreak: 'break-all',
+                marginBottom: '16px',
+                fontFamily: 'monospace',
+                background: 'rgba(255, 255, 255, 0.8)',
+                padding: '12px 16px',
+                borderRadius: '12px',
+                border: '1px solid rgba(48, 55, 72, 0.1)'
+              }}>
                 {result.data.short_url}
-              </a>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(result.data.short_url);
+                    alert('✅ Copied to clipboard!');
+                  }}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#48bb78',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontWeight: '700',
+                    fontSize: '15px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    boxShadow: '0 4px 12px rgba(72, 187, 120, 0.3)'
+                  }}
+                  onHover={(e) => e.target.style.transform = 'translateY(-2px)'}
+                >
+                  📋 Copy Link
+                </button>
+                
+                <a
+                  href={result.data.short_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    padding: '12px 24px',
+                    background: '#4299e1',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontWeight: '700',
+                    fontSize: '15px',
+                    cursor: 'pointer',
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                    transition: 'all 0.2s',
+                    boxShadow: '0 4px 12px rgba(66, 153, 225, 0.3)'
+                  }}
+                >
+                  🔗 Test Link
+                </a>
+              </div>
             </div>
 
             <div style={{ marginTop: '16px', fontSize: '14px', color: '#2d3748' }}>
