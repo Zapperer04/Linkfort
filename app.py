@@ -355,7 +355,7 @@ def shorten_url():
         set_cached_url(existing.short_code, {'original_url': existing.original_url, 'id': existing.id, 'threat_verdict': existing.threat_verdict})
         return jsonify({'message': 'URL already shortened', 'data': existing.to_dict(), 'rate_limit_remaining': remaining}), 200
 
-    new_url = URL(original_url=original_url, short_code='temp', threat_score=threat_score, threat_verdict=verdict, threat_details=details, expires_at=expires_at, user_id=current_user_id)
+    new_url = URL(original_url=original_url, short_code=f'temp_{generate_random_code(8)}', threat_score=threat_score, threat_verdict=verdict, threat_details=details, expires_at=expires_at, user_id=current_user_id)
     db.session.add(new_url)
     db.session.flush()
 
