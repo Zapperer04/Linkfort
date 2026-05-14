@@ -51,7 +51,8 @@ function Auth({ onSuccess, onBackToHome }) {
       length: password.length >= 6,
       uppercase: /[A-Z]/.test(password),
       lowercase: /[a-z]/.test(password),
-      numbers: /\d/.test(password),      // eslint-disable-next-line no-useless-escape      special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(password)
+      numbers: /\d/.test(password),
+      special: /[!@#$%^&*()_+=[\]{};':"\\|,.<>/?-]/.test(password)
     };
     
     const score = Object.values(checks).filter(Boolean).length;
