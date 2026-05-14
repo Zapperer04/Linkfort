@@ -171,16 +171,16 @@ function AppContent() {
 
             <div className="app-footer-column">
               <h3>Product</h3>
-              <a onClick={() => { setActiveTab('dashboard'); setSelectedShortCode(null); }}>Overview</a>
-              <a onClick={() => { setActiveTab('create'); setSelectedShortCode(null); }}>Create Link</a>
-              <a onClick={() => { setActiveTab('analytics'); setSelectedShortCode(null); }}>Analytics</a>
+              <a href="#dashboard" onClick={(e) => { e.preventDefault(); setActiveTab('dashboard'); setSelectedShortCode(null); }}>Overview</a>
+              <a href="#create" onClick={(e) => { e.preventDefault(); setActiveTab('create'); setSelectedShortCode(null); }}>Create Link</a>
+              <a href="#analytics" onClick={(e) => { e.preventDefault(); setActiveTab('analytics'); setSelectedShortCode(null); }}>Analytics</a>
             </div>
 
             <div className="app-footer-column">
               <h3>Support</h3>
               <a href="mailto:support@linkfort.local">Contact Support</a>
-              <a onClick={() => { setActiveTab('dashboard'); setSelectedShortCode(null); }}>Dashboard</a>
-              <a onClick={() => { setActiveTab('analytics'); setSelectedShortCode(null); }}>Metrics Guide</a>
+              <a href="#dashboard" onClick={(e) => { e.preventDefault(); setActiveTab('dashboard'); setSelectedShortCode(null); }}>Dashboard</a>
+              <a href="#analytics" onClick={(e) => { e.preventDefault(); setActiveTab('analytics'); setSelectedShortCode(null); }}>Metrics Guide</a>
             </div>
 
             <div className="app-footer-column">
