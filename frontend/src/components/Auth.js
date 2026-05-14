@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
-function Auth({ onSuccess, onBackToHome }) {
-  const [isLogin, setIsLogin] = useState(true);
+function Auth({ initialMode = 'login', onSuccess, onBackToHome }) {
+  const [isLogin, setIsLogin] = useState(initialMode !== 'signup');
+
+  useEffect(() => {
+    setIsLogin(initialMode !== 'signup');
+  }, [initialMode]);
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',

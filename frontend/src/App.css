@@ -600,17 +600,21 @@ input[type="text"]:focus, input[type="url"]:focus {
   gap: 10px;
 }
 
-.app-footer-column li {
+.app-footer-column li,
+.app-footer-column a {
   color: rgba(255, 255, 255, 0.55);
   font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
-  cursor: default;
+  cursor: pointer;
+  text-decoration: none;
+  margin-bottom: 4px;
 }
 
-.app-footer-column li::before {
+.app-footer-column li::before,
+.app-footer-column a::before {
   content: '›';
   color: #00d9ff;
   font-size: 1.2rem;
@@ -621,15 +625,42 @@ input[type="text"]:focus, input[type="url"]:focus {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.app-footer-column li:hover {
+.app-footer-column li:hover,
+.app-footer-column a:hover {
   color: #fff;
   transform: translateX(4px);
 }
 
-.app-footer-column li:hover::before {
+.app-footer-column li:hover::before,
+.app-footer-column a:hover::before {
   opacity: 1;
   transform: translateX(0);
   color: #00ff88;
+}
+
+.app-footer-action {
+  border: none;
+  border-radius: 10px;
+  padding: 0.7rem 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(120deg, #00d9ff, #00ff88);
+  color: #041124;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: fit-content;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.app-footer-action.secondary {
+  background: rgba(79, 93, 255, 0.2);
+  color: #edf4ff;
+  border: 1px solid rgba(141, 153, 255, 0.35);
+}
+
+.app-footer-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 217, 255, 0.22);
 }
 
 .app-footer-bottom {

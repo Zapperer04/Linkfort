@@ -158,55 +158,43 @@ function AppContent() {
         <div className="app-footer-container">
           <div className="app-footer-shell">
             <div className="app-footer-brand">
-              <div className="app-footer-logo">
-                <span className="logo-shield">🛡️</span> LinkFort
-              </div>
+              <div className="app-footer-logo">LinkFort</div>
               <p>
-                Next-generation URL shortening platform engineered with real-time threat intelligence, multi-layer destination scanning, and comprehensive click analytics.
+                Secure short links with risk checks, click tracking, and a premium dashboard experience.
               </p>
               <div className="app-footer-badges">
-                <span>Multi-layer Detection</span>
-                <span>Rate Limiting</span>
-                <span>Real-time Analytics</span>
+                <span>Threat Detection</span>
+                <span>Click Analytics</span>
+                <span>Expiration Control</span>
               </div>
             </div>
 
             <div className="app-footer-column">
-              <h3>Core Infrastructure</h3>
-              <ul>
-                <li>Flask Python Backend</li>
-                <li>React Client Application</li>
-                <li>PostgreSQL + Redis Cache</li>
-                <li>VirusTotal AI Threat Feeds</li>
-              </ul>
+              <h3>Product</h3>
+              <a onClick={() => { setActiveTab('dashboard'); setSelectedShortCode(null); }}>Overview</a>
+              <a onClick={() => { setActiveTab('create'); setSelectedShortCode(null); }}>Create Link</a>
+              <a onClick={() => { setActiveTab('analytics'); setSelectedShortCode(null); }}>Analytics</a>
             </div>
 
             <div className="app-footer-column">
-              <h3>Security Ecosystem</h3>
-              <ul>
-                <li>Multi-stage URL Scanning</li>
-                <li>Safe / Warning / Blocked States</li>
-                <li>High-speed Bloom Filters</li>
-                <li>Stateless JWT Auth Tokens</li>
-              </ul>
+              <h3>Support</h3>
+              <a href="mailto:support@linkfort.local">Contact Support</a>
+              <a onClick={() => { setActiveTab('dashboard'); setSelectedShortCode(null); }}>Dashboard</a>
+              <a onClick={() => { setActiveTab('analytics'); setSelectedShortCode(null); }}>Metrics Guide</a>
             </div>
 
             <div className="app-footer-column">
-              <h3>Platform Capabilities</h3>
-              <ul>
-                <li>Custom Branded Aliases</li>
-                <li>Time-based Link Expiration</li>
-                <li>Geographic Metrics</li>
-                <li>Live Analytics Streaming</li>
-              </ul>
+              <h3>Actions</h3>
+              <button className="app-footer-action" onClick={() => { setActiveTab('create'); setSelectedShortCode(null); }}>✨ Shorten URL</button>
+              <button className="app-footer-action secondary" onClick={logout}>🚪 Log out</button>
             </div>
           </div>
 
           <div className="app-footer-bottom">
             <div className="footer-copyright">
-              <span>© 2026 LinkFort Portal</span>
+              <span>© 2026 LinkFort</span>
               <span className="footer-dot">•</span>
-              <span>Secure, protected, tracked.</span>
+              <span>Shorten, protect, and track your links.</span>
             </div>
             <div className="footer-status">
               <span className="status-indicator"></span>
