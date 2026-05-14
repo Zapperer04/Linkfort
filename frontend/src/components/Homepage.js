@@ -312,45 +312,47 @@ function Homepage({ onNavigateToAuth, onNavigateToSignup }) {
       </section>
 
       <footer className="lf-footer">
-        <div className="lf-footer-shell">
-          <div className="lf-footer-brand">
-            <div className="lf-footer-logo">LinkFort</div>
-            <p>
-              Secure short links with risk checks, click tracking, and a premium dashboard experience.
-            </p>
-            <div className="lf-footer-badges">
-              <span>Threat Detection</span>
-              <span>Click Analytics</span>
-              <span>Expiration Control</span>
+        <div className="lf-footer-container">
+          <div className="lf-footer-shell">
+            <div className="lf-footer-brand">
+              <div className="lf-footer-logo">LinkFort</div>
+              <p>
+                Secure short links with risk checks, click tracking, and a premium dashboard experience.
+              </p>
+              <div className="lf-footer-badges">
+                <span>Threat Detection</span>
+                <span>Click Analytics</span>
+                <span>Expiration Control</span>
+              </div>
+            </div>
+
+            <div className="lf-footer-column">
+              <h3>Product</h3>
+              <a href="#overview">Overview</a>
+              <a href="#features">Features</a>
+              <a href="#security">Security</a>
+              <a href="#analytics">Analytics</a>
+            </div>
+
+            <div className="lf-footer-column">
+              <h3>Support</h3>
+              <a href="#faq">FAQ</a>
+              <a href="mailto:support@linkfort.local">Contact Support</a>
+              <a href="#overview">Getting Started</a>
+              <a href="#security">Safety Guide</a>
+            </div>
+
+            <div className="lf-footer-column">
+              <h3>Actions</h3>
+              <button className="lf-footer-action" onClick={onNavigateToSignup}>Join Now</button>
+              <button className="lf-footer-action secondary" onClick={onNavigateToAuth}>Log in</button>
             </div>
           </div>
 
-          <div className="lf-footer-column">
-            <h3>Product</h3>
-            <a href="#overview">Overview</a>
-            <a href="#features">Features</a>
-            <a href="#security">Security</a>
-            <a href="#analytics">Analytics</a>
+          <div className="lf-footer-bottom">
+            <span>© 2026 LinkFort</span>
+            <span>Shorten, protect, and track your links.</span>
           </div>
-
-          <div className="lf-footer-column">
-            <h3>Support</h3>
-            <a href="#faq">FAQ</a>
-            <a href="mailto:support@linkfort.local">Contact Support</a>
-            <a href="#overview">Getting Started</a>
-            <a href="#security">Safety Guide</a>
-          </div>
-
-          <div className="lf-footer-column">
-            <h3>Actions</h3>
-            <button className="lf-footer-action" onClick={onNavigateToSignup}>Join Now</button>
-            <button className="lf-footer-action secondary" onClick={onNavigateToAuth}>Log in</button>
-          </div>
-        </div>
-
-        <div className="lf-footer-bottom">
-          <span>© 2026 LinkFort</span>
-          <span>Shorten, protect, and track your links.</span>
         </div>
       </footer>
     </div>

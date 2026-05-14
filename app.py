@@ -1,9 +1,9 @@
 from flask import Flask, request, jsonify, redirect, render_template_string, current_app
-from flask_cors import CORS
+from flask_cors import CORS  # type: ignore
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, decode_token
 from flask_bcrypt import Bcrypt
 from config import Config
-from models import db, URL, Click, User
+from models import db, URL, Click, User, format_iso
 from utils import generate_short_code, generate_random_code
 from cache import init_redis, get_cached_url, set_cached_url, check_rate_limit
 from threat_detection import init_threat_detection, calculate_threat_score
@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 from sqlalchemy import func
 import validators
 import traceback
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import re
 import os
 
@@ -57,8 +57,9 @@ with app.app_context():
 
 def get_client_ip():
     """Get client IP address"""
-    if request.headers.get('X-Forwarded-For'):
-        return request.headers.get('X-Forwarded-For').split(',')[0]
+    x_forwarded_for = request.headers.get('X-Forwarded-For')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[0]
     return request.remote_addr
 
 # ==================== PAGE TEMPLATES ====================
@@ -337,7 +338,7 @@ def shorten_url():
         try:
             days = int(expiration_days)
             if days < 1 or days > 365: return jsonify({'error': 'Exp must be 1-365 days'}), 400
-            expires_at = datetime.utcnow() + timedelta(days=days)
+            expires_at = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=days)
         except ValueError: return jsonify({'error': 'Invalid expiration days'}), 400
 
     threat_score, verdict, details = calculate_threat_score(original_url)
@@ -463,7 +464,7 @@ def get_dashboard_stats():
     """Get dashboard statistics for logged in user"""
     try:
         user_id = int(get_jwt_identity())
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         base_query = URL.query.filter_by(user_id=user_id)
 
         total_urls = base_query.count()
@@ -473,14 +474,14 @@ def get_dashboard_stats():
         expired_urls = base_query.filter(URL.expires_at.isnot(None), URL.expires_at <= now).count()
 
         recent_threats = base_query.filter_by(threat_verdict='BLOCK').order_by(URL.created_at.desc()).limit(20).all()
-        threats_data = [{'id': url.id, 'url': url.original_url, 'score': url.threat_score, 'time': url.created_at.isoformat(), 'reasons': url.threat_details.get('all_reasons', []) if url.threat_details else []} for url in recent_threats]
+        threats_data = [{'id': url.id, 'url': url.original_url, 'score': url.threat_score, 'time': format_iso(url.created_at), 'reasons': url.threat_details.get('all_reasons', []) if url.threat_details else []} for url in recent_threats]
 
         active_url_list = base_query.filter(URL.threat_verdict.in_(['SAFE', 'WARN']), db.or_(URL.expires_at.is_(None), URL.expires_at > now)).order_by(URL.created_at.desc()).limit(20).all()
         base_url = current_app.config.get('BASE_URL', 'http://localhost:5000')
-        active_data = [{'id': url.id, 'original_url': url.original_url, 'short_url': f"{base_url}/{url.short_code}", 'short_code': url.short_code, 'verdict': url.threat_verdict, 'score': url.threat_score, 'clicks': url.click_count, 'created_at': url.created_at.isoformat(), 'expires_at': url.expires_at.isoformat() if url.expires_at else None} for url in active_url_list]
+        active_data = [{'id': url.id, 'original_url': url.original_url, 'short_url': f"{base_url}/{url.short_code}", 'short_code': url.short_code, 'verdict': url.threat_verdict, 'score': url.threat_score, 'clicks': url.click_count, 'created_at': format_iso(url.created_at), 'expires_at': format_iso(url.expires_at)} for url in active_url_list]
 
         expired_url_list = base_query.filter(URL.expires_at.isnot(None), URL.expires_at <= now).order_by(URL.expires_at.desc()).limit(20).all()
-        expired_data = [{'id': url.id, 'original_url': url.original_url, 'short_url': f"{base_url}/{url.short_code}", 'short_code': url.short_code, 'verdict': url.threat_verdict, 'score': url.threat_score, 'clicks': url.click_count, 'created_at': url.created_at.isoformat(), 'expires_at': url.expires_at.isoformat() if url.expires_at else None} for url in expired_url_list]
+        expired_data = [{'id': url.id, 'original_url': url.original_url, 'short_url': f"{base_url}/{url.short_code}", 'short_code': url.short_code, 'verdict': url.threat_verdict, 'score': url.threat_score, 'clicks': url.click_count, 'created_at': format_iso(url.created_at), 'expires_at': format_iso(url.expires_at)} for url in expired_url_list]
 
         return jsonify({'stats': {'total_urls': total_urls, 'total_clicks': int(total_clicks), 'threats_blocked': threats_blocked, 'active_urls': active_urls, 'expired_urls': expired_urls}, 'recent_threats': threats_data, 'active_urls': active_data, 'expired_urls': expired_data}), 200
     except Exception as e:
@@ -494,31 +495,48 @@ def get_analytics():
     """Get analytics data - filtered by logged in user"""
     try:
         user_id = int(get_jwt_identity())
+        now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
+        today_start = now_utc.replace(hour=0, minute=0, second=0, microsecond=0)
         threat_trends = []
         for i in range(6, -1, -1):
-            date = datetime.now() - timedelta(days=i)
-            safe = URL.query.filter(URL.user_id == user_id, URL.threat_verdict == 'SAFE', func.date(URL.created_at) == date.date()).count()
-            warn = URL.query.filter(URL.user_id == user_id, URL.threat_verdict == 'WARN', func.date(URL.created_at) == date.date()).count()
-            blocked = URL.query.filter(URL.user_id == user_id, URL.threat_verdict == 'BLOCK', func.date(URL.created_at) == date.date()).count()
-            threat_trends.append({'date': date.strftime('%b %d'), 'safe': safe, 'warn': warn, 'blocked': blocked})
+            day_start = today_start - timedelta(days=i)
+            day_end = day_start + timedelta(days=1)
+            safe = URL.query.filter(URL.user_id == user_id, URL.threat_verdict == 'SAFE', URL.created_at >= day_start, URL.created_at < day_end).count()
+            warn = URL.query.filter(URL.user_id == user_id, URL.threat_verdict == 'WARN', URL.created_at >= day_start, URL.created_at < day_end).count()
+            blocked = URL.query.filter(URL.user_id == user_id, URL.threat_verdict == 'BLOCK', URL.created_at >= day_start, URL.created_at < day_end).count()
+            threat_trends.append({'date': day_start.strftime('%b %d'), 'safe': safe, 'warn': warn, 'blocked': blocked})
 
-        score_ranges = [{'range': '0.0-0.2', 'count': 0}, {'range': '0.2-0.4', 'count': 0}, {'range': '0.4-0.6', 'count': 0}, {'range': '0.6-0.8', 'count': 0}, {'range': '0.8-1.0', 'count': 0}]
+        counts = [0, 0, 0, 0, 0]
         user_urls = URL.query.filter_by(user_id=user_id).all()
         for url in user_urls:
             s = url.threat_score
-            if s < 0.2: score_ranges[0]['count'] += 1
-            elif s < 0.4: score_ranges[1]['count'] += 1
-            elif s < 0.6: score_ranges[2]['count'] += 1
-            elif s < 0.8: score_ranges[3]['count'] += 1
-            else: score_ranges[4]['count'] += 1
+            if s < 0.2: counts[0] += 1
+            elif s < 0.4: counts[1] += 1
+            elif s < 0.6: counts[2] += 1
+            elif s < 0.8: counts[3] += 1
+            else: counts[4] += 1
 
-        layer_perf = [{'name': 'Layer 1', 'value': 0}, {'name': 'Layer 2', 'value': 0}, {'name': 'Layer 3', 'value': 0}]
+        score_ranges = [
+            {'range': '0.0-0.2', 'count': counts[0]},
+            {'range': '0.2-0.4', 'count': counts[1]},
+            {'range': '0.4-0.6', 'count': counts[2]},
+            {'range': '0.6-0.8', 'count': counts[3]},
+            {'range': '0.8-1.0', 'count': counts[4]}
+        ]
+
+        layer_counts = [0, 0, 0]
         for url in user_urls:
             if url.threat_details:
                 layers = url.threat_details.get('layers', {})
-                if layers.get('layer1', {}).get('score', 0) >= 0.5: layer_perf[0]['value'] += 1
-                if layers.get('layer2', {}).get('score', 0) >= 0.5: layer_perf[1]['value'] += 1
-                if layers.get('layer3', {}).get('score', 0) >= 0.5: layer_perf[2]['value'] += 1
+                if layers.get('layer1', {}).get('score', 0) >= 0.5: layer_counts[0] += 1
+                if layers.get('layer2', {}).get('score', 0) >= 0.5: layer_counts[1] += 1
+                if layers.get('layer3', {}).get('score', 0) >= 0.5: layer_counts[2] += 1
+
+        layer_perf = [
+            {'name': 'Layer 1', 'value': layer_counts[0]},
+            {'name': 'Layer 2', 'value': layer_counts[1]},
+            {'name': 'Layer 3', 'value': layer_counts[2]}
+        ]
 
         domain_stats = {}
         for url in [u for u in user_urls if u.threat_verdict == 'BLOCK']:
@@ -535,11 +553,12 @@ def get_analytics():
             top_blocked.append({'domain': domain, 'count': stats['count'], 'avgScore': sum(stats['scores'])/len(stats['scores']), 'topReason': stats['reasons'][0] if stats['reasons'] else 'Unknown'})
 
         click_stats = []
-        now = datetime.now()
+        current_hour_utc = now_utc.replace(minute=0, second=0, microsecond=0)
         for i in range(11, -1, -1):
-            h_start = now - timedelta(hours=i)
-            cnt = Click.query.join(URL).filter(URL.user_id == user_id, Click.clicked_at >= h_start, Click.clicked_at < (h_start + timedelta(hours=1))).count()
-            click_stats.append({'hour': h_start.strftime('%H:%M'), 'clicks': cnt})
+            h_start_utc = current_hour_utc - timedelta(hours=i)
+            h_end_utc = h_start_utc + timedelta(hours=1)
+            cnt = Click.query.join(URL).filter(URL.user_id == user_id, Click.clicked_at >= h_start_utc, Click.clicked_at < h_end_utc).count()
+            click_stats.append({'hour': h_start_utc.strftime('%H:00 UTC'), 'clicks': cnt})
 
         return jsonify({'threatTrends': threat_trends, 'scoreDistribution': score_ranges, 'topBlockedDomains': top_blocked, 'layerPerformance': layer_perf, 'clickStats': click_stats}), 200
     except Exception as e:
@@ -558,11 +577,11 @@ def get_url_detail(short_code):
     if url.user_id != user_id: return jsonify({'error': 'Access denied'}), 403
 
     recent_clicks = Click.query.filter_by(url_id=url.id).order_by(Click.clicked_at.desc()).limit(20).all()
-    clicks_data = [{'id': c.id, 'clicked_at': c.clicked_at.isoformat(), 'ip_address': c.ip_address} for c in recent_clicks]
+    clicks_data = [{'id': c.id, 'clicked_at': format_iso(c.clicked_at), 'ip_address': c.ip_address} for c in recent_clicks]
 
     click_trend = []
     for i in range(6, -1, -1):
-        day = datetime.utcnow() - timedelta(days=i)
+        day = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=i)
         count = Click.query.filter(Click.url_id == url.id, func.date(Click.clicked_at) == day.date()).count()
         click_trend.append({'date': day.strftime('%b %d'), 'clicks': count})
 
@@ -588,13 +607,13 @@ def edit_url(short_code):
             try:
                 days = int(exp)
                 if days < 1 or days > 365: return jsonify({'error': '1-365 days range required'}), 400
-                url.expires_at = datetime.utcnow() + timedelta(days=days)
+                url.expires_at = datetime.now(timezone.utc).replace(tzinfo=None) + timedelta(days=days)
             except: return jsonify({'error': 'Invalid expiration value'}), 400
 
     db.session.commit()
     try:
-        from cache import redis_client
-        redis_client.delete(f"url:{short_code}")
+        from cache import invalidate_cache
+        invalidate_cache(short_code)
     except: pass
     return jsonify({'message': 'URL updated successfully', 'data': url.to_dict()}), 200
 
@@ -612,8 +631,8 @@ def toggle_url(short_code):
     url.is_active = data.get('is_active', not url.is_active)
     db.session.commit()
     try:
-        from cache import redis_client
-        redis_client.delete(f"url:{short_code}")
+        from cache import invalidate_cache
+        invalidate_cache(short_code)
     except: pass
     return jsonify({'message': f"URL {'enabled' if url.is_active else 'disabled'} successfully", 'data': url.to_dict()}), 200
 
@@ -628,8 +647,8 @@ def delete_url(short_code):
     if url.user_id != user_id: return jsonify({'error': 'Access denied'}), 403
 
     try:
-        from cache import redis_client
-        redis_client.delete(f"url:{short_code}")
+        from cache import invalidate_cache
+        invalidate_cache(short_code)
     except: pass
     db.session.delete(url)
     db.session.commit()

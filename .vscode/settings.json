@@ -1,6 +1,6 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}\\venv\\Scripts\\python.exe",
+    "python.defaultInterpreterPath": "D:\\Projects\\linkfort\\venv\\Scripts\\python.exe",
     "python.analysis.extraPaths": [
-        "${workspaceFolder}\\venv\\Lib\\site-packages"
+        "D:\\Projects\\linkfort\\venv\\Lib\\site-packages"
     ]
 }

@@ -19,11 +19,16 @@ function Dashboard({ onOpenURL }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('active');
   const [copied, setCopied] = useState(null);
+  const [currentTime, setCurrentTime] = useState(Date.now());
 
   useEffect(() => {
     fetchDashboardData();
-    const interval = setInterval(fetchDashboardData, 10000);
-    return () => clearInterval(interval);
+    const dataInterval = setInterval(fetchDashboardData, 10000);
+    const timerInterval = setInterval(() => setCurrentTime(Date.now()), 1000);
+    return () => {
+      clearInterval(dataInterval);
+      clearInterval(timerInterval);
+    };
   }, []);
 
   const fetchDashboardData = async () => {
@@ -50,10 +55,10 @@ function Dashboard({ onOpenURL }) {
   };
 
   const getTimeAgo = (isoString) => {
+    if (!isoString) return '';
     const date = new Date(isoString);
-    const now = new Date();
-    const seconds = Math.floor((now - date) / 1000);
-    if (seconds < 60) return `${seconds}s ago`;
+    const seconds = Math.floor((currentTime - date.getTime()) / 1000);
+    if (seconds < 60) return `${Math.max(0, seconds)}s ago`;
     if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
     return `${Math.floor(seconds / 86400)}d ago`;
@@ -62,9 +67,9 @@ function Dashboard({ onOpenURL }) {
   const getExpiresIn = (isoString) => {
     if (!isoString) return 'Never';
     const date = new Date(isoString);
-    const now = new Date();
-    const seconds = Math.floor((date - now) / 1000);
-    if (seconds < 0) return 'Expired';
+    const seconds = Math.floor((date.getTime() - currentTime) / 1000);
+    if (seconds <= 0) return 'Expired';
+    if (seconds < 60) return `${seconds}s left`;
     if (seconds < 3600) return `${Math.floor(seconds / 60)}m left`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)}h left`;
     return `${Math.floor(seconds / 86400)}d left`;
@@ -176,7 +181,9 @@ function Dashboard({ onOpenURL }) {
                         </td>
                         <td style={{ textAlign: 'center' }}>
                           {url.expires_at ? (
-                            <span className="dashboard-status-expired">{getExpiresIn(url.expires_at)}</span>
+                            <span className={getExpiresIn(url.expires_at) === 'Expired' ? 'dashboard-status-expired' : 'dashboard-status-active'}>
+                              {getExpiresIn(url.expires_at)}
+                            </span>
                           ) : (
                             <span className="dashboard-status-never">Never</span>
                           )}

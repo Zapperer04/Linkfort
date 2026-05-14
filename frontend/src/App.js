@@ -155,47 +155,64 @@ function AppContent() {
       </main>
 
       <footer className="app-footer">
-        <div className="app-footer-shell">
-          <div className="app-footer-brand">
-            <div className="app-footer-logo">🛡️ LinkFort</div>
-            <p>
-              Secure URL shortening with real-time threat detection, click analytics, and complete control.
-            </p>
-            <div className="app-footer-badges">
-              <span>Multi-layer Detection</span>
-              <span>Rate Limiting</span>
-              <span>Real-time Analytics</span>
+        <div className="app-footer-container">
+          <div className="app-footer-shell">
+            <div className="app-footer-brand">
+              <div className="app-footer-logo">
+                <span className="logo-shield">🛡️</span> LinkFort
+              </div>
+              <p>
+                Next-generation URL shortening platform engineered with real-time threat intelligence, multi-layer destination scanning, and comprehensive click analytics.
+              </p>
+              <div className="app-footer-badges">
+                <span>Multi-layer Detection</span>
+                <span>Rate Limiting</span>
+                <span>Real-time Analytics</span>
+              </div>
+            </div>
+
+            <div className="app-footer-column">
+              <h3>Core Infrastructure</h3>
+              <ul>
+                <li>Flask Python Backend</li>
+                <li>React Client Application</li>
+                <li>PostgreSQL + Redis Cache</li>
+                <li>VirusTotal AI Threat Feeds</li>
+              </ul>
+            </div>
+
+            <div className="app-footer-column">
+              <h3>Security Ecosystem</h3>
+              <ul>
+                <li>Multi-stage URL Scanning</li>
+                <li>Safe / Warning / Blocked States</li>
+                <li>High-speed Bloom Filters</li>
+                <li>Stateless JWT Auth Tokens</li>
+              </ul>
+            </div>
+
+            <div className="app-footer-column">
+              <h3>Platform Capabilities</h3>
+              <ul>
+                <li>Custom Branded Aliases</li>
+                <li>Time-based Link Expiration</li>
+                <li>Geographic Metrics</li>
+                <li>Live Analytics Streaming</li>
+              </ul>
             </div>
           </div>
 
-          <div className="app-footer-column">
-            <h3>Built With</h3>
-            <span>Flask Backend</span>
-            <span>React Frontend</span>
-            <span>PostgreSQL + Redis</span>
-            <span>VirusTotal API</span>
+          <div className="app-footer-bottom">
+            <div className="footer-copyright">
+              <span>© 2026 LinkFort Portal</span>
+              <span className="footer-dot">•</span>
+              <span>Secure, protected, tracked.</span>
+            </div>
+            <div className="footer-status">
+              <span className="status-indicator"></span>
+              <span>Threat Protection Active</span>
+            </div>
           </div>
-
-          <div className="app-footer-column">
-            <h3>Security</h3>
-            <span>Threat Detection</span>
-            <span>Safe / Warning / Blocked</span>
-            <span>Bloom Filter Cache</span>
-            <span>JWT Authentication</span>
-          </div>
-
-          <div className="app-footer-column">
-            <h3>Features</h3>
-            <span>Short URL Creation</span>
-            <span>Custom Aliases</span>
-            <span>Link Expiration</span>
-            <span>Click Tracking</span>
-          </div>
-        </div>
-
-        <div className="app-footer-bottom">
-          <span>© 2026 LinkFort</span>
-          <span>Secure, protected, tracked.</span>
         </div>
       </footer>
     </div>
