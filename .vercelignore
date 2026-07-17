@@ -5,7 +5,8 @@ models.py
 utils.py
 cache.py
 threat_detection.py
-train_ml_model.py
+scripts/
+
 worker.py
 test*.py
 requirements.txt

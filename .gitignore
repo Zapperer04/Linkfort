@@ -1,39 +1,36 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# Dependencies
+# ── Node ────────────────────────────────────────────────────────────────────
 node_modules/
 frontend/node_modules/
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# secrets
+# ── Build output ─────────────────────────────────────────────────────────────
+build/
+dist/
+frontend/build/
+
+# ── Test / Coverage ──────────────────────────────────────────────────────────
+coverage/
+
+# ── Secrets / Environment ────────────────────────────────────────────────────
 .env
 .env.backup
 .env*.local
 
-# python/backend 
+# ── Python ───────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
+*.pyo
 venv/
+.venv/
 
-# Production
-build/
-dist/
-
-# OS files
+# ── OS ───────────────────────────────────────────────────────────────────────
 .DS_Store
+Thumbs.db
+
+# ── Editor ───────────────────────────────────────────────────────────────────
+.vscode/settings.json
+
+# ── ML model binaries (committed intentionally — remove this line to exclude) ─
+# *.pkl
